@@ -1,0 +1,11 @@
+{
+	"apps": [
+		{
+			"name": "NEM_TYPESCRIPT-V2",
+			"script": "./dist/app.js",
+			"autorestart": true,
+			"watch": false,
+			"max_memory_restart": "1G"
+		}
+	]
+}
