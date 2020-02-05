@@ -32,6 +32,10 @@
 		"@types/node": "^13.7.0",
 		"@types/passport": "^1.0.2",
 		"@types/passport-jwt": "^3.0.3",
+		"@types/chalk": "^2.2.0",
+		"@types/compression": "^1.0.1",
+		"@types/cors": "^2.8.6",
+		"@types/helmet": "0.0.45",
 		"nodemon": "^2.0.2",
 		"ts-loader": "^6.2.1",
 		"ts-node": "^8.6.2",
@@ -40,9 +44,6 @@
 		"webpack-node-externals": "^1.7.2"
 	},
 	"dependencies": {
-		"@types/compression": "^1.0.1",
-		"@types/cors": "^2.8.6",
-		"@types/helmet": "0.0.45",
 		"chalk": "^3.0.0",
 		"compression": "^1.7.4",
 		"cors": "^2.8.5",
