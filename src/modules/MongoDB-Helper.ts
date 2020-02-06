@@ -21,6 +21,7 @@ class DB {
 		});
 
 		mongoose.set("useCreateIndex", true);
+		mongoose.set("useUnifiedTopology", true);
 		mongoose.connect(url || process.env.DB_URL || "mongodb://localhost/NEM-TEMPLATE-V2", { useNewUrlParser: true });
 	}
 	/**
