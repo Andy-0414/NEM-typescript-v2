@@ -37,6 +37,12 @@ export interface IUserSchema extends IUser, Document {
 	 * @returns {string} 이 유저에 대한 토큰을 반홚바니다.
 	 */
 	getUserToken(): string;
+	/**
+	 * @description 비밀번호를 재설정합니다
+	 * @param {string}password 새 비밀번호
+	 * @returns {Promise<IUserSchema>} 변경된 유저를 반환합니다.
+	 */
+	createEncryptionPassword(password: string): Promise<IUserSchema>;
 }
 
 /**
@@ -64,7 +70,20 @@ export interface IUserModel extends Model<IUserSchema> {
 }
 
 UserSchema.methods.getUserToken = function(this: IUserSchema): string {
-	return (this.constructor as IUserModel).getToken(this);
+	let constructor = this.constructor as IUserModel;
+	return constructor.getToken(this);
+};
+
+UserSchema.methods.resetPassword = async function(this: IUserSchema, password: string): Promise<IUserSchema> {
+	try {
+		let constructor = this.constructor as IUserModel;
+		let encryptionPassword = await constructor.createEncryptionPassword(password);
+		this.password = encryptionPassword.password;
+		this.salt = encryptionPassword.salt;
+		return await this.save();
+	} catch (err) {
+		throw err;
+	}
 };
 
 UserSchema.statics.getToken = function(this: IUserModel, data: IUser): string {
