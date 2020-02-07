@@ -60,7 +60,7 @@ export interface IUserModel extends Model<IUserSchema> {
 	 * @param {boolean}isEncryptionPassword 평문 비밀번호가 아닐 시 (토큰 사용 로그인 시)
 	 * @returns {Promise<IUserSchema>} 로그인 성공 시 유저를 반환합니다.
 	 */
-	loginAuthentication(loginData: IUser, isEncryptionPassword?: boolean): Promise<IUserSchema>;
+	loginAuthentication(loginData: IUserDefaultLogin, isEncryptionPassword?: boolean): Promise<IUserSchema>;
 }
 
 UserSchema.methods.getUserToken = function(this: IUserSchema): string {

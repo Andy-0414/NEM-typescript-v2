@@ -2,6 +2,7 @@ import * as passport from "passport";
 import { Handler } from "express";
 import { StrategyOptions, Strategy, ExtractJwt } from "passport-jwt";
 import User, { IUser, IUserDefaultLogin } from "../schema/User";
+import { StatusError, HTTPRequestCode } from "./Send-Rule";
 
 class PassportJWTManager {
 	private option: StrategyOptions = {
@@ -12,14 +13,14 @@ class PassportJWTManager {
 
 	constructor() {
 		passport.use(
-			new Strategy(this.option, (data: IUserDefaultLogin, done) => {
-				// User.loginValidation(data)
-				// 	.then(user => {
-				// 		done(null, user);
-				// 	})
-				// 	.catch(err => {
-				// 		done(err);
-				// 	});
+			new Strategy(this.option, async (data: IUserDefaultLogin, done) => {
+				try {
+					let user = await User.loginAuthentication(data);
+					if (user) done(null, user);
+					else new StatusError(HTTPRequestCode.UNAUTHORIZED, "인증 실패");
+				} catch (err) {
+					done(err);
+				}
 			})
 		);
 		this.initialize = passport.initialize();
