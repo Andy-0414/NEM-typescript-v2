@@ -33,7 +33,7 @@ class PassportJWTManager {
 		return this.initialize;
 	}
 	/**
-	 * @description Authorization 헤더 안의 Bearer 토큰를 이용하여(기본값) 로그인 후 유저에 대한 정보를 req.user 에 저장합니다. 로그인 실패 시 401을 반환합니다.
+	 * @description Authorization 헤더 안의 Bearer 토큰를 이용하여(기본값) 로그인 후 계정에 대한 정보를 req.user 에 저장합니다. 로그인 실패 시 401을 반환합니다.
 	 * @returns {Handler}
 	 */
 	public authenticate(session: boolean = false): Handler {

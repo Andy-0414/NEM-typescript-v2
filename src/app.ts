@@ -8,6 +8,7 @@ import "dotenv/config";
 import Log from "./modules/Log";
 import DB from "./modules/MongoDB-Helper";
 import SendRule from "./modules/Send-Rule";
+import Router from "./router/index";
 
 const app: express.Application = express(); // 서버 객체
 
@@ -27,6 +28,7 @@ app.listen(process.env.PORT || 3000, () => {
 
 DB.init();
 
+app.use(Router);
 app.use(SendRule.autoErrorHandler()); // 에러 핸들링
 
 export default app;

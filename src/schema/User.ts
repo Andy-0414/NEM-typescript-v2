@@ -33,14 +33,14 @@ const UserSchema: Schema = new Schema({
  */
 export interface IUserSchema extends IUser, Document {
 	/**
-	 * @description 이 유저에 대한 토큰을 생성합니다.
-	 * @returns {string} 이 유저에 대한 토큰을 반홚바니다.
+	 * @description 이 계정에 대한 토큰을 생성합니다.
+	 * @returns {string} 이 계정에 대한 토큰을 반홚바니다.
 	 */
 	getUserToken(): string;
 	/**
 	 * @description 비밀번호를 재설정합니다
 	 * @param {string}password 새 비밀번호
-	 * @returns {Promise<IUserSchema>} 변경된 유저를 반환합니다.
+	 * @returns {Promise<IUserSchema>} 변경된 계정를 반환합니다.
 	 */
 	createEncryptionPassword(password: string): Promise<IUserSchema>;
 }
@@ -50,8 +50,8 @@ export interface IUserSchema extends IUser, Document {
  */
 export interface IUserModel extends Model<IUserSchema> {
 	/**
-	 * @description 입력받은 유저의 토큰을 생성합니다.
-	 * @returns {string} 입력받은 유저에 대한 토큰
+	 * @description 입력받은 계정의 토큰을 생성합니다.
+	 * @returns {string} 입력받은 계정에 대한 토큰
 	 */
 	getToken(data: IUserSchema): string;
 	/**
@@ -61,10 +61,16 @@ export interface IUserModel extends Model<IUserSchema> {
 	 */
 	createEncryptionPassword(password: string, salt?: string): Promise<EncryptionPassword>;
 	/**
+	 * @description 계정을 만듭니다.
+	 * @param {string}password 암호화 할 비밀번호
+	 * @returns {Promise<EncryptionPassword>} 비밀번호와 암호화 키를 반환합니다.
+	 */
+	createUser(data: IUser): Promise<IUserSchema>;
+	/**
 	 * @description 이메일과 패스워드로 로그인을 시도합니다
 	 * @param loginData 로그인 정보
 	 * @param {boolean}isEncryptionPassword 평문 비밀번호가 아닐 시 (토큰 사용 로그인 시)
-	 * @returns {Promise<IUserSchema>} 로그인 성공 시 유저를 반환합니다.
+	 * @returns {Promise<IUserSchema>} 로그인 성공 시 계정를 반환합니다.
 	 */
 	loginAuthentication(loginData: IUserDefaultLogin, isEncryptionPassword?: boolean): Promise<IUserSchema>;
 }
@@ -109,15 +115,20 @@ UserSchema.statics.createEncryptionPassword = async function(this: IUserModel, p
 };
 
 UserSchema.statics.createUser = async function(this: IUserModel, data: IUser): Promise<IUserSchema> {
-	if ("email" in data && "password" in data) {
-		let encryptionPassword = await this.createEncryptionPassword(data.password);
-		data.password = encryptionPassword.password;
-		data.salt = encryptionPassword.salt;
+	try {
+		if ("email" in data && "password" in data) {
+			if (this.findOne({ email: data.email })) throw new StatusError(HTTPRequestCode.BAD_REQUEST, "이미 존재하는 계정");
+			let encryptionPassword = await this.createEncryptionPassword(data.password);
+			data.password = encryptionPassword.password;
+			data.salt = encryptionPassword.salt;
 
-		let user = await new this(data).save();
-		return user;
-	} else {
-		throw new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청");
+			let user = await new this(data).save();
+			return user;
+		} else {
+			throw new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청");
+		}
+	} catch (err) {
+		throw err;
 	}
 };
 
