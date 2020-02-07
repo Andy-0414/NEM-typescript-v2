@@ -53,7 +53,14 @@ export interface IUserModel extends Model<IUserSchema> {
 	 * @param {string}password 암호화 할 비밀번호
 	 * @returns {Promise<EncryptionPassword>} 비밀번호와 암호화 키를 반환합니다.
 	 */
-	createEncryptionPassword(password: string): Promise<EncryptionPassword>;
+	createEncryptionPassword(password: string, salt?: string): Promise<EncryptionPassword>;
+	/**
+	 * @description 이메일과 패스워드로 로그인을 시도합니다
+	 * @param loginData 로그인 정보
+	 * @param {boolean}isEncryptionPassword 평문 비밀번호가 아닐 시 (토큰 사용 로그인 시)
+	 * @returns {Promise<IUserSchema>} 로그인 성공 시 유저를 반환합니다.
+	 */
+	loginAuthentication(loginData: IUser, isEncryptionPassword?: boolean): Promise<IUserSchema>;
 }
 
 UserSchema.methods.getUserToken = function(this: IUserSchema): string {
@@ -68,13 +75,13 @@ UserSchema.statics.getToken = function(this: IUserModel, data: IUser): string {
 	return "Bearer " + jwt.encode(user, process.env.SECRET_KEY || "SECRET");
 };
 
-UserSchema.statics.createEncryptionPassword = async function(password: string): Promise<EncryptionPassword> {
-	let data: EncryptionPassword = {
-		password: "",
-		salt: ""
-	};
+UserSchema.statics.createEncryptionPassword = async function(this: IUserModel, password: string, salt?: string): Promise<EncryptionPassword> {
 	try {
-		data.salt = await crypto.randomBytes(64).toString("base64");
+		let data: EncryptionPassword = {
+			password: "",
+			salt: salt || ""
+		};
+		data.salt = data.salt || (await crypto.randomBytes(64).toString("base64"));
 		data.password = crypto.pbkdf2Sync(password, data.salt, 10000, 64, "sha512").toString("base64");
 		return data;
 	} catch (err) {
@@ -94,4 +101,23 @@ UserSchema.statics.createUser = async function(this: IUserModel, data: IUser): P
 		throw new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청");
 	}
 };
+
+UserSchema.statics.loginAuthentication = async function(this: IUserModel, loginData: IUserDefaultLogin, isEncryptionPassword: boolean = false) {
+	try {
+		let user = await this.findOne({ email: loginData.email });
+		if (!user) {
+			throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "존재하지 않는 계정");
+		} else {
+			// 평문 비밀번호는 암호화된 비밀번호로 변환
+			let password = isEncryptionPassword ? loginData.password : (await this.createEncryptionPassword(loginData.password, user.salt)).password;
+			if (password == user.password) return user;
+			else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "비밀번호가 일치하지 않음");
+		}
+	} catch (err) {
+		throw err;
+	}
+};
+
+// CASCADE 구현
+UserSchema.pre("remove", () => {});
 export default model<IUserSchema>("User", UserSchema) as IUserModel;
