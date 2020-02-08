@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import User, { IUser } from "../../schema/User";
+import User, { IUser, IUserSchema } from "../../schema/User";
 import SendRule, { HTTPRequestCode } from "../../modules/Send-Rule";
 
 /**
@@ -16,6 +16,16 @@ export const Login = async (req: Request, res: Response, next: NextFunction) => 
 	} catch (err) {
 		next(err);
 	}
+};
+/**
+ * @description 토큰으로 계정에 대한 정보 가져오기
+ * @param {Request}req Express req
+ * @param {Response}res Express res
+ * @param {NextFunction}next Express next
+ */
+export const My = (req: Request, res: Response, next: NextFunction) => {
+	let user = req.user as IUserSchema;
+	SendRule.response(res, HTTPRequestCode.OK, user, "계정 정보 가져오기 성공");
 };
 
 /**

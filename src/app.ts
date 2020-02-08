@@ -8,6 +8,7 @@ import "dotenv/config";
 import Log from "./modules/Log";
 import DB from "./modules/MongoDB-Helper";
 import SendRule from "./modules/Send-Rule";
+import PassportJWTManager from "./modules/Passport-JWT-Auth";
 import Router from "./router/index";
 
 const app: express.Application = express(); // 서버 객체
@@ -20,6 +21,7 @@ app.use(compression()); // 데이터 압축 미들웨어
 app.use(express.static("public")); // public 폴더의 파일을 제공함
 app.use(express.urlencoded({ limit: "20mb", extended: true })); // urlencode 지원
 app.use(express.json({ limit: "20mb" })); // json 지원
+app.use(PassportJWTManager.getInitialize());
 
 app.listen(process.env.PORT || 3000, () => {
 	// 서버가 열렸을 시 콜백
