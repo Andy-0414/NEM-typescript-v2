@@ -27,9 +27,10 @@ const UserSchema: Schema = new Schema({
 	lastLoginTime: { type: Date, default: Date.now },
 	createdTime: { type: Date, default: Date.now }
 });
+const NonUpdatableField = ["email", "password", "salt", "lastLoginTime", "createdTime"];
 
 /**
- * @description User 스키마에 대한 메서드 ( 레코드 )
+ * @description User 스키마에 대한 메서드 ( document )
  */
 export interface IUserSchema extends IUser, Document {
 	/**
@@ -42,11 +43,17 @@ export interface IUserSchema extends IUser, Document {
 	 * @param {string}password 새 비밀번호
 	 * @returns {Promise<IUserSchema>} 변경된 계정를 반환합니다.
 	 */
-	createEncryptionPassword(password: string): Promise<IUserSchema>;
+	resetPassword(password: string): Promise<IUserSchema>;
+	/**
+	 * @description 계정 정보를 재설정합니다
+	 * @param {string}IUser 계정 정보
+	 * @returns {Promise<IUserSchema>} 변경된 계정를 반환합니다.
+	 */
+	changeInfo(user: IUser): Promise<IUserSchema>;
 }
 
 /**
- * @description User 모델에 대한 정적 메서드 ( 테이블 )
+ * @description User 모델에 대한 정적 메서드 ( collection )
  */
 export interface IUserModel extends Model<IUserSchema> {
 	/**
@@ -91,6 +98,16 @@ UserSchema.methods.resetPassword = async function(this: IUserSchema, password: s
 		throw err;
 	}
 };
+UserSchema.methods.changeInfo = async function(this: IUserSchema, user: IUser): Promise<IUserSchema> {
+	try {
+		Object.keys(user).forEach(key => {
+			if (NonUpdatableField.indexOf(key) == -1) this[key] = user[key];
+		});
+		return await this.save();
+	} catch (err) {
+		throw err;
+	}
+};
 
 UserSchema.statics.getToken = function(this: IUserModel, data: IUser): string {
 	let user: IUserDefaultLogin = {
@@ -117,7 +134,7 @@ UserSchema.statics.createEncryptionPassword = async function(this: IUserModel, p
 UserSchema.statics.createUser = async function(this: IUserModel, data: IUser): Promise<IUserSchema> {
 	try {
 		if ("email" in data && "password" in data) {
-			if (this.findOne({ email: data.email })) throw new StatusError(HTTPRequestCode.BAD_REQUEST, "이미 존재하는 계정");
+			if (await this.findOne({ email: data.email })) throw new StatusError(HTTPRequestCode.BAD_REQUEST, "이미 존재하는 계정");
 			let encryptionPassword = await this.createEncryptionPassword(data.password);
 			data.password = encryptionPassword.password;
 			data.salt = encryptionPassword.salt;
