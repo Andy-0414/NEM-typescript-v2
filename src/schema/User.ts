@@ -20,9 +20,9 @@ export interface IUser extends IUserDefaultLogin {
 }
 const UserSchema: Schema = new Schema({
 	email: { type: String, required: true, unique: true },
-	password: { type: String, required: true },
+	password: { type: String, required: true, select: false },
 	username: { type: String, default: "" },
-	salt: { type: String, default: process.env.SECRET_KEY || "SECRET" },
+	salt: { type: String, default: process.env.SECRET_KEY || "SECRET", select: false },
 	imgPath: { type: String, default: "" },
 	lastLoginTime: { type: Date, default: Date.now },
 	createdTime: { type: Date, default: Date.now }
@@ -139,8 +139,7 @@ UserSchema.statics.createUser = async function(this: IUserModel, data: IUser): P
 			data.password = encryptionPassword.password;
 			data.salt = encryptionPassword.salt;
 
-			let user = await new this(data).save();
-			return user;
+			return await new this(data).save();
 		} else {
 			throw new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청");
 		}
@@ -151,12 +150,13 @@ UserSchema.statics.createUser = async function(this: IUserModel, data: IUser): P
 
 UserSchema.statics.loginAuthentication = async function(this: IUserModel, loginData: IUserDefaultLogin, isEncryptionPassword: boolean = false) {
 	try {
-		let user = await this.findOne({ email: loginData.email });
+		let user: IUserSchema = await this.findOne({ email: loginData.email }, { password: 1, salt: 1 });
 		if (!user) {
 			throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "존재하지 않는 계정");
 		} else {
 			// 평문 비밀번호는 암호화된 비밀번호로 변환
 			let password = isEncryptionPassword ? loginData.password : (await this.createEncryptionPassword(loginData.password, user.salt)).password;
+			console.log(user.password, password);
 			if (password == user.password) return user;
 			else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "비밀번호가 일치하지 않음");
 		}

@@ -52,7 +52,7 @@ export const CreateUser = async (req: Request, res: Response, next: NextFunction
  */
 export const GetAllUsers = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		let users = await User.find({}, { password: 0, salt: 0 });
+		let users = await User.find();
 		SendRule.response(res, HTTPRequestCode.OK, users, "계정 목록 가져오기 성공");
 	} catch (err) {
 		next(err);
@@ -87,7 +87,7 @@ export const ResetPassword = async (req: Request, res: Response, next: NextFunct
 		let id = req.params.id;
 		if (user._id == id) {
 			let password = req.body.password;
-			SendRule.response(res, HTTPRequestCode.OK, await user.resetPassword(password), "계정 정보 변경 성공");
+			SendRule.response(res, HTTPRequestCode.OK, await user.resetPassword(password), "계정 비밀번호 변경 성공");
 		} else {
 			next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
 		}
