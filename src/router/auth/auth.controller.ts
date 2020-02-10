@@ -12,6 +12,7 @@ export const Login = async (req: Request, res: Response, next: NextFunction) => 
 	try {
 		let loginData = req.body;
 		let user = await User.loginAuthentication(loginData);
+
 		SendRule.response(res, HTTPRequestCode.OK, user.getUserToken(), "계정 로그인 성공");
 	} catch (err) {
 		next(err);
@@ -25,6 +26,7 @@ export const Login = async (req: Request, res: Response, next: NextFunction) => 
  */
 export const My = (req: Request, res: Response, next: NextFunction) => {
 	let user = req.user as IUserSchema;
+
 	SendRule.response(res, HTTPRequestCode.OK, user, "계정 정보 가져오기 성공");
 };
 
@@ -38,6 +40,7 @@ export const CreateUser = async (req: Request, res: Response, next: NextFunction
 	try {
 		let userData: IUser = req.body;
 		let user = await User.createUser(userData);
+
 		SendRule.response(res, HTTPRequestCode.CREATE, user, "계정 생성 성공");
 	} catch (err) {
 		next(err);
@@ -53,6 +56,7 @@ export const CreateUser = async (req: Request, res: Response, next: NextFunction
 export const GetAllUsers = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		let users = await User.find();
+
 		SendRule.response(res, HTTPRequestCode.OK, users, "계정 목록 가져오기 성공");
 	} catch (err) {
 		next(err);
@@ -68,6 +72,7 @@ export const GetAllUsers = async (req: Request, res: Response, next: NextFunctio
 export const GetUser = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		let id = req.params.id;
+
 		let users = await User.find({ _id: id }, { password: 0, salt: 0 });
 		SendRule.response(res, HTTPRequestCode.OK, users, "계정 가져오기 성공");
 	} catch (err) {
@@ -85,6 +90,7 @@ export const ResetPassword = async (req: Request, res: Response, next: NextFunct
 	try {
 		let user = req.user as IUserSchema;
 		let id = req.params.id;
+
 		if (user._id == id) {
 			let password = req.body.password;
 			SendRule.response(res, HTTPRequestCode.OK, await user.resetPassword(password), "계정 비밀번호 변경 성공");
@@ -106,6 +112,7 @@ export const ChangeInfo = async (req: Request, res: Response, next: NextFunction
 	try {
 		let user = req.user as IUserSchema;
 		let id = req.params.id;
+
 		if (user._id == id) {
 			let userInfo = req.body as IUser;
 			SendRule.response(res, HTTPRequestCode.OK, await user.changeInfo(userInfo), "계정 정보 변경 성공");
@@ -127,6 +134,7 @@ export const DeleteUser = async (req: Request, res: Response, next: NextFunction
 	try {
 		let user = req.user as IUserSchema;
 		let id = req.params.id;
+
 		if (user._id == id) {
 			SendRule.response(res, HTTPRequestCode.OK, await user.remove(), "계정 삭제 성공");
 		} else {

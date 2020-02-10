@@ -35,7 +35,7 @@ const NonUpdatableField = ["email", "password", "salt", "lastLoginTime", "create
 export interface IUserSchema extends IUser, Document {
 	/**
 	 * @description 이 계정에 대한 토큰을 생성합니다.
-	 * @returns {string} 이 계정에 대한 토큰을 반홚바니다.
+	 * @returns {string} 이 계정에 대한 토큰을 반환합니다.
 	 */
 	getUserToken(): string;
 	/**
