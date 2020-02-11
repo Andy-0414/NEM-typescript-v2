@@ -43,10 +43,10 @@ PostSchema.methods.ownerPermissionCheck = function(this: IPostSchema, user: IUse
 	return this.owner == user._id;
 };
 
-PostSchema.methods.updaetData = async function(this: IPostSchema, user: IUserSchema): Promise<IPostSchema> {
+PostSchema.methods.updaetData = async function(this: IPostSchema, post: IPost): Promise<IPostSchema> {
 	try {
-		Object.keys(user).forEach(key => {
-			if (NonUpdatableField.indexOf(key) == -1) this[key] = user[key];
+		Object.keys(post).forEach(key => {
+			if (NonUpdatableField.indexOf(key) == -1) this[key] = post[key];
 		});
 		return await this.save();
 	} catch (err) {
