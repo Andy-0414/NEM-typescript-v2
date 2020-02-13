@@ -1,6 +1,7 @@
-import { Model, Schema, Document, model } from "mongoose";
+import { Model, Schema, Document, model, HookNextFunction } from "mongoose";
 import { ObjectID } from "bson";
 import { IUserSchema } from "./User";
+import Comment from "./Comment";
 
 export interface IPost {
 	owner: Schema.Types.ObjectId;
@@ -54,5 +55,12 @@ PostSchema.methods.updaetData = async function(this: IPostSchema, post: IPost): 
 	}
 };
 
-PostSchema.pre("remove", () => {});
+PostSchema.pre("remove", async function(this: IPostSchema, next: HookNextFunction) {
+	try {
+		let comment = await Comment.remove({ post: this._id });
+		next();
+	} catch (err) {
+		next(err);
+	}
+});
 export default model<IPostSchema>("Post", PostSchema) as IPostModel;

@@ -1,7 +1,9 @@
-import { Model, Document, Schema, model } from "mongoose";
+import { Model, Document, Schema, model, HookNextFunction } from "mongoose";
 import * as jwt from "jwt-simple";
 import * as crypto from "crypto";
 import { HTTPRequestCode, StatusError } from "../modules/Send-Rule";
+import Post from "./Post";
+import Comment from "./Comment";
 
 export interface EncryptionPassword {
 	password: string;
@@ -166,5 +168,13 @@ UserSchema.statics.loginAuthentication = async function(this: IUserModel, loginD
 };
 
 // CASCADE 구현
-UserSchema.pre("remove", () => {});
+UserSchema.pre("remove", async function(this: IUserSchema, next: HookNextFunction) {
+	try {
+		let post = await Post.remove({ owner: this._id });
+		let comment = await Comment.remove({ owner: this._id });
+		next();
+	} catch (err) {
+		next(err);
+	}
+});
 export default model<IUserSchema>("User", UserSchema) as IUserModel;
