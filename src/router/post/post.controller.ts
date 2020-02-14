@@ -32,7 +32,7 @@ export const ReadPost = async (req: Request, res: Response, next: NextFunction) 
 		let post = await Post.findOne({ _id: id });
 
 		if (post) SendRule.response(res, HTTPRequestCode.OK, post, "글 가져오기 성공");
-		else next(new StatusError(HTTPRequestCode.NOT_FOUND, "존재하지 않음"));
+		else next(new StatusError(HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않음"));
 	} catch (err) {
 		next(err);
 	}
@@ -48,7 +48,7 @@ export const UpdatePost = async (req: Request, res: Response, next: NextFunction
 		if (post) {
 			if (post.ownerPermissionCheck(user)) SendRule.response(res, HTTPRequestCode.OK, await post.updateData(postData), "글 수정 성공");
 			else next(new StatusError(HTTPRequestCode.FORBIDDEN, "권한 없음"));
-		} else next(new StatusError(HTTPRequestCode.NOT_FOUND, "존재하지 않음"));
+		} else next(new StatusError(HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않음"));
 	} catch (err) {
 		next(err);
 	}
@@ -63,7 +63,7 @@ export const DeletePost = async (req: Request, res: Response, next: NextFunction
 		if (post) {
 			if (post.ownerPermissionCheck(user)) SendRule.response(res, HTTPRequestCode.OK, await post.remove(), "글 삭제 성공");
 			else next(new StatusError(HTTPRequestCode.FORBIDDEN, "권한 없음"));
-		} else next(new StatusError(HTTPRequestCode.NOT_FOUND, "존재하지 않음"));
+		} else next(new StatusError(HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않음"));
 	} catch (err) {
 		next(err);
 	}
