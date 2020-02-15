@@ -1,5 +1,6 @@
 import { Router } from "express";
 import PassportJWTManager from "../../modules/Passport-JWT-Auth";
+import { CreateComment, ReadComment, UpdateComment, DeleteComment } from "./comment.controller";
 
 const router = Router();
 
