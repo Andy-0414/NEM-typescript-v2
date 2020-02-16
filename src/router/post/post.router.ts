@@ -4,8 +4,6 @@ import { CreatePost, ReadPosts, ReadPost, UpdatePost, DeletePost } from "./post.
 
 const router = Router();
 
-// Routers
-
 router.post("/", PassportJWTManager.authenticate(), CreatePost);
 
 router.get("/", ReadPosts);

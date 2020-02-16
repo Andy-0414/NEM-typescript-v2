@@ -13,3 +13,6 @@ Node.js + Express + MongoDB + Typescript 를 사용하여 서버 탬플릿을 �
 -   ~~async, await을 사용해서 구현하기~~
 -   ~~User 최근 로그인 시간 버그 픽스~~
 -   테스트 케이스 만들기
+-   토큰 만료 및 갱신 제작하기
+-   웹에서 사용 가능하도록 세션 사용 모드 만들기
+-   RESTfulAPI 문서만들기

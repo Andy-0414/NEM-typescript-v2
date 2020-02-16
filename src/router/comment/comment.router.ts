@@ -4,8 +4,6 @@ import { CreateComment, ReadComment, UpdateComment, DeleteComment } from "./comm
 
 const router = Router();
 
-// Routers
-
 router.post("/", PassportJWTManager.authenticate(), CreateComment);
 
 router.get("/:id", ReadComment);
