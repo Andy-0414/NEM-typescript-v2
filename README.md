@@ -11,5 +11,5 @@ Node.js + Express + MongoDB + Typescript 를 사용하여 서버 탬플릿을 �
 -   ~~게시글인 Post 스키마를 구현~~
 -   ~~댓글인 Comment 스키마를 구현~~~
 -   ~~async, await을 사용해서 구현하기~~
+-   ~~User 최근 로그인 시간 버그 픽스~~
 -   테스트 케이스 만들기
--   User 최근 로그인 시간 버그 픽스

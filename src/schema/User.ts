@@ -158,9 +158,10 @@ UserSchema.statics.loginAuthentication = async function(this: IUserModel, loginD
 		} else {
 			// 평문 비밀번호는 암호화된 비밀번호로 변환
 			let password = isEncryptionPassword ? loginData.password : (await this.createEncryptionPassword(loginData.password, user.salt)).password;
-			console.log(user.password, password);
-			if (password == user.password) return user;
-			else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "비밀번호가 일치하지 않음");
+			if (password == user.password) {
+				user.lastLoginTime = new Date();
+				return await user.save();
+			} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "비밀번호가 일치하지 않음");
 		}
 	} catch (err) {
 		throw err;
