@@ -6,7 +6,7 @@ import { StatusError, HTTPRequestCode } from "./Send-Rule";
 
 class PassportJWTManager {
 	private option: StrategyOptions = {
-		jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+		jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // Bearer Token (Header)
 		secretOrKey: process.env.SECRET_KEY || "SECRET"
 	};
 	private initialize: Handler;
