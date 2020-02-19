@@ -1,15 +1,15 @@
 import { Router } from "express";
 import PassportJWTManager from "../../modules/Passport-JWT-Auth";
-import { CreateComment, ReadComment, UpdateComment, DeleteComment } from "./comment.controller";
+import commentController from "./comment.controller";
 
 const router = Router();
 
-router.post("/", PassportJWTManager.authenticate(), CreateComment);
+router.post("/", PassportJWTManager.authenticate(), commentController.createComment);
 
-router.get("/:id", ReadComment);
+router.get("/:id", commentController.readComment);
 
-router.put("/:id", PassportJWTManager.authenticate(), UpdateComment);
+router.put("/:id", PassportJWTManager.authenticate(), commentController.updateComment);
 
-router.delete("/:id", PassportJWTManager.authenticate(), DeleteComment);
+router.delete("/:id", PassportJWTManager.authenticate(), commentController.deleteComment);
 
 export default router;

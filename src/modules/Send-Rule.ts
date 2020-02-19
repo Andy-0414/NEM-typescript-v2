@@ -24,23 +24,6 @@ export class StatusError extends Error {
 }
 class SendRule {
 	/**
-	 * @description 데이터 리스폰스 규격
-	 * @param {Response} res Express Response
-	 * @param {number} status 상태 코드
-	 * @param {any} data 전송할 데이터
-	 * @param {string} message 메세지
-	 * @param {boolean} result 성공 여부
-	 */
-	public response(res: Response, status: HTTPRequestCode, data?: any, message?: string, result: boolean = true) {
-		res.status(status)
-			.send({
-				result,
-				data,
-				message: message || this.HTTPRequestCodeToMessage(status)
-			})
-			.end();
-	}
-	/**
 	 * @description 에러 코드를 문자열로 바꾸어 반환합니다.
 	 * @param {HTTPRequestCode} status 에러 코드
 	 * @returns {string} 에러 문자
@@ -76,7 +59,7 @@ class SendRule {
 			err.status = err.status || 500;
 			err.message = err.message || this.HTTPRequestCodeToMessage(err.status);
 			Log.e(err.message);
-			this.response(res, err.status, null, err.message, false);
+			res.status(err.status).send({ result: false, message: err.message });
 		};
 	}
 }

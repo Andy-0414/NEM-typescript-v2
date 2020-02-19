@@ -1,19 +1,19 @@
 import { Router } from "express";
-import { GetAllUsers, GetUser, CreateUser, Login, My, ChangeInfo, DeleteUser, ResetPassword } from "./auth.controller";
 import PassportJWTManager from "../../modules/Passport-JWT-Auth";
+import authController from "./auth.controller";
 
 const router = Router();
 
-router.post("/users/login", Login);
-router.post("/users/my", PassportJWTManager.authenticate(), My);
+router.post("/users/login", authController.login);
+router.post("/users/my", PassportJWTManager.authenticate(), authController.my);
 
-router.post("/users", CreateUser);
+router.post("/users", authController.createUser);
 
-router.get("/users", GetAllUsers);
-router.get("/users/:id", GetUser);
+router.get("/users", authController.getAllUsers);
+router.get("/users/:id", authController.getUser);
 
-router.post("/users/:id/reset-password", PassportJWTManager.authenticate(), ResetPassword);
-router.put("/users/:id", PassportJWTManager.authenticate(), ChangeInfo);
-router.delete("/users/:id", PassportJWTManager.authenticate(), DeleteUser);
+router.post("/users/:id/reset-password", PassportJWTManager.authenticate(), authController.resetPassword);
+router.put("/users/:id", PassportJWTManager.authenticate(), authController.changeInfo);
+router.delete("/users/:id", PassportJWTManager.authenticate(), authController.deleteUser);
 
 export default router;
