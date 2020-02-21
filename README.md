@@ -11,6 +11,7 @@ Node.js + Express + MongoDB + Typescript 를 사용하여 서버 탬플릿을 �
 ```
 SECRET_KEY=STRING
 PORT=NUMBER
+TOKEN_EXPIRATION=NUMBER(ms)
 ```
 
 ```

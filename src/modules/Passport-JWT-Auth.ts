@@ -1,7 +1,7 @@
 import * as passport from "passport";
 import { Handler } from "express";
 import { StrategyOptions, Strategy, ExtractJwt } from "passport-jwt";
-import User, { IUser, IUserDefaultLogin } from "../schema/User";
+import User, { IUserToken } from "../schema/User";
 import { StatusError, HTTPRequestCode } from "./Send-Rule";
 
 class PassportJWTManager {
@@ -13,7 +13,7 @@ class PassportJWTManager {
 
 	constructor() {
 		passport.use(
-			new Strategy(this.option, async (data: IUserDefaultLogin, done) => {
+			new Strategy(this.option, async (data: IUserToken, done) => {
 				try {
 					let user = await User.loginAuthentication(data, true);
 					if (user) done(null, user);

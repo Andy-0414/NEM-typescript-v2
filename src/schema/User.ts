@@ -13,7 +13,10 @@ export interface IUserDefaultLogin {
 	email: string;
 	password: string;
 }
-export interface IUser extends IUserDefaultLogin {
+export interface IUserToken extends IUserDefaultLogin {
+	lastLoginTime?: Date;
+}
+export interface IUser extends IUserToken {
 	username: string;
 	salt?: string;
 	imagePath?: string;
@@ -81,7 +84,7 @@ export interface IUserModel extends Model<IUserSchema> {
 	 * @param {boolean}isEncryptionPassword 평문 비밀번호가 아닐 시 (토큰 사용 로그인 시)
 	 * @returns {Promise<IUserSchema>} 로그인 성공 시 계정를 반환합니다.
 	 */
-	loginAuthentication(loginData: IUserDefaultLogin, isEncryptionPassword?: boolean): Promise<IUserSchema>;
+	loginAuthentication(loginData: IUserToken, isEncryptionPassword?: boolean): Promise<IUserSchema>;
 }
 
 UserSchema.methods.getUserToken = function(this: IUserSchema): string {
@@ -112,9 +115,10 @@ UserSchema.methods.changeInfo = async function(this: IUserSchema, user: IUser): 
 };
 
 UserSchema.statics.getToken = function(this: IUserModel, data: IUser): string {
-	let user: IUserDefaultLogin = {
+	let user: IUserToken = {
 		email: data.email,
-		password: data.password
+		password: data.password,
+		lastLoginTime: data.lastLoginTime
 	};
 	return "Bearer " + jwt.encode(user, process.env.SECRET_KEY || "SECRET");
 };
@@ -150,7 +154,7 @@ UserSchema.statics.createUser = async function(this: IUserModel, data: IUser): P
 	}
 };
 
-UserSchema.statics.loginAuthentication = async function(this: IUserModel, loginData: IUserDefaultLogin, isEncryptionPassword: boolean = false) {
+UserSchema.statics.loginAuthentication = async function(this: IUserModel, loginData: IUserToken, isEncryptionPassword: boolean = false) {
 	try {
 		let user: IUserSchema = await this.findOne({ email: loginData.email }, { password: 1, salt: 1 });
 		if (!user) {
@@ -161,10 +165,10 @@ UserSchema.statics.loginAuthentication = async function(this: IUserModel, loginD
 			let now: Date = new Date();
 			if (password == user.password) {
 				// 토큰을 이용한 로그인은 10분 주기로 갱신 필요 TODO: 유동적인 콘피그 파일 제작해야함
-				if (now.getTime() - user.lastLoginTime.getTime() <= 600000 && !isEncryptionPassword) {
+				if (now.getTime() - loginData.lastLoginTime.getTime() <= (process.env.TOKEN_EXPIRATION || 600000) && !isEncryptionPassword) {
 					user.lastLoginTime = now;
 					return await user.save();
-				} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "토큰 만료");
+				} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "만료된 토큰");
 			} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "비밀번호가 일치하지 않음");
 		}
 	} catch (err) {
