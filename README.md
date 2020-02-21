@@ -7,6 +7,7 @@ Node.js + Express + MongoDB + Typescript 를 사용하여 서버 탬플릿을 �
 # GET STARTED
 
 .env
+
 ```
 SECRET_KEY=STRING
 PORT=NUMBER
@@ -15,6 +16,7 @@ PORT=NUMBER
 ```
 npm install
 ```
+
 ```
 npm start
 ```
@@ -31,5 +33,5 @@ npm start
 -   ~~User 최근 로그인 시간 버그 픽스~~
 -   ~~클래스를 사용해서 SendRule 병합하기~~
 -   테스트 케이스 만들기
--   토큰 만료 및 갱신 제작하기
+-   ~~토큰 만료 및 갱신 제작하기~~
 -   RESTfulAPI 문서만들기

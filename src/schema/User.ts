@@ -157,10 +157,14 @@ UserSchema.statics.loginAuthentication = async function(this: IUserModel, loginD
 			throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "존재하지 않는 계정");
 		} else {
 			// 평문 비밀번호는 암호화된 비밀번호로 변환
-			let password = isEncryptionPassword ? loginData.password : (await this.createEncryptionPassword(loginData.password, user.salt)).password;
+			let password: string = isEncryptionPassword ? loginData.password : (await this.createEncryptionPassword(loginData.password, user.salt)).password;
+			let now: Date = new Date();
 			if (password == user.password) {
-				user.lastLoginTime = new Date();
-				return await user.save();
+				// 토큰을 이용한 로그인은 10분 주기로 갱신 필요 TODO: 유동적인 콘피그 파일 제작해야함
+				if (now.getTime() - user.lastLoginTime.getTime() <= 600000 && !isEncryptionPassword) {
+					user.lastLoginTime = now;
+					return await user.save();
+				} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "토큰 만료");
 			} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "비밀번호가 일치하지 않음");
 		}
 	} catch (err) {
