@@ -5,6 +5,7 @@ import authController from "./auth.controller";
 const router = Router();
 
 router.post("/users/login", authController.login);
+router.post("/users/token", PassportJWTManager.authenticate(), authController.getToken);
 router.post("/users/my", PassportJWTManager.authenticate(), authController.my);
 
 router.post("/users", authController.createUser);

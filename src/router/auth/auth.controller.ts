@@ -21,6 +21,21 @@ class AuthController extends Controller {
 		}
 	}
 	/**
+	 * @description 토큰 재발급
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
+	public async getToken(req: Request, res: Response, next: NextFunction) {
+		try {
+			let user = req.user as IUserSchema;
+
+			this.response(res, HTTPRequestCode.OK, user.getUserToken(), "토큰 갱신 성공");
+		} catch (err) {
+			next(err);
+		}
+	}
+	/**
 	 * @description 토큰으로 계정에 대한 정보 가져오기
 	 * @param {Request}req Express req
 	 * @param {Response}res Express res
