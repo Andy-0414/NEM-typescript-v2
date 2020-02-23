@@ -40,6 +40,7 @@ npm start
 # Router
 
 -   auth
+
     -   POST /auth/users/login
     -   POST /auth/users/my
     -   POST /auth/users/token
@@ -49,3 +50,17 @@ npm start
     -   POST /auth/users/:id/reset-password
     -   PUT /auth/users/:id
     -   DELETE /auth/users/:id
+
+-   post
+    -   POST /post
+    -   GET /post
+    -   GET /post/:id
+    -   PUT /post/:id
+    -   DELETE /post/:id
+
+-   comment
+    -   POST /comment
+    -   GET /comment
+    -   GET /comment/:id
+    -   PUT /comment/:id
+    -   DELETE /comment/:id
