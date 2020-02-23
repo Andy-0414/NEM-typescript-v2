@@ -33,6 +33,19 @@ npm start
 -   ~~async, await을 사용해서 구현하기~~
 -   ~~User 최근 로그인 시간 버그 픽스~~
 -   ~~클래스를 사용해서 SendRule 병합하기~~
--   ~~토큰 만료 및 갱신 제작하기~~
 -   테스트 케이스 만들기
+-   ~~토큰 만료 및 갱신 제작하기~~
 -   RESTfulAPI 문서만들기
+
+# Router
+
+-   auth
+    -   POST /auth/users/login
+    -   POST /auth/users/my
+    -   POST /auth/users/token
+    -   POST /auth/users
+    -   GET /auth/users
+    -   GET /auth/users/:id
+    -   POST /auth/users/:id/reset-password
+    -   PUT /auth/users/:id
+    -   DELETE /auth/users/:id
