@@ -28,9 +28,9 @@ app.listen(process.env.PORT || 3000, () => {
 	Log.i(`SERVER OPEN | PORT : ${process.env.PORT || 3000}`);
 });
 
-DB.init();
+DB.init(); // DB 세팅
 
-app.use(Router);
+app.use(Router); // 라우터 연결
 app.use(SendRule.autoErrorHandler()); // 에러 핸들링
 
 export default app;

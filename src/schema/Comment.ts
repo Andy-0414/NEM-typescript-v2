@@ -18,7 +18,7 @@ const CommentSchema: Schema = new Schema({
 const NonUpdatableField = ["post", "owner", "lastUpdateTime", "createdTime"];
 
 /**
- * @description User 스키마에 대한 메서드 ( document )
+ * @description Comment 스키마에 대한 메서드 ( document )
  */
 export interface ICommentSchema extends IComment, Document {
 	/**
@@ -34,7 +34,7 @@ export interface ICommentSchema extends IComment, Document {
 }
 
 /**
- * @description User 모델에 대한 정적 메서드 ( collection )
+ * @description Comment 모델에 대한 정적 메서드 ( collection )
  */
 export interface ICommentModel extends Model<ICommentSchema> {}
 
