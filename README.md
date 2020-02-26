@@ -36,6 +36,7 @@ npm start
 -   ~~토큰 만료 및 갱신 제작하기~~
 -   ~~RESTfulAPI 문서만들기~~
 -   테스트 케이스 만들기 ( mocha )
+-   CRUD가 가능한 모델 템플릿 만들기
 -   라우터 문서 구체화해야함
 
 # Router
@@ -53,6 +54,7 @@ npm start
     -   DELETE /auth/users/:id
 
 -   post
+
     -   POST /post
     -   GET /post
     -   GET /post/:id
