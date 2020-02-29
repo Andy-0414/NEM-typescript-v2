@@ -1,6 +1,8 @@
 import SendRule, { HTTPRequestCode } from "../modules/Send-Rule";
 import { Response } from "express";
-
+/**
+ * @description 라우터 내장 함수들
+ */
 export default class Controller {
 	/**
 	 * @description 데이터 리스폰스 규격

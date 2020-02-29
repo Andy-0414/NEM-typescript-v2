@@ -6,6 +6,12 @@ import Comment, { IComment } from "../../schema/Comment";
 import Controller from "../controller";
 
 class CommentController extends Controller {
+	/**
+	 * @description 댓글 생성
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
 	public async createComment(req: Request, res: Response, next: NextFunction) {
 		try {
 			let user = req.user as IUserSchema;
@@ -23,7 +29,12 @@ class CommentController extends Controller {
 			next(err);
 		}
 	}
-
+	/**
+	 * @description 댓글 열람
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
 	public async readComment(req: Request, res: Response, next: NextFunction) {
 		try {
 			let id = req.params.id;
@@ -35,7 +46,12 @@ class CommentController extends Controller {
 			next(err);
 		}
 	}
-
+	/**
+	 * @description 댓글 갱신
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
 	public async updateComment(req: Request, res: Response, next: NextFunction) {
 		try {
 			let user = req.user as IUserSchema;
@@ -51,7 +67,12 @@ class CommentController extends Controller {
 			next(err);
 		}
 	}
-
+	/**
+	 * @description 댓글 삭제
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
 	public async deleteComment(req: Request, res: Response, next: NextFunction) {
 		try {
 			let user = req.user as IUserSchema;

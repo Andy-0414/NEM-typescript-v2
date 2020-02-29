@@ -5,6 +5,12 @@ import { IUserSchema } from "../../schema/User";
 import Controller from "../controller";
 
 class PostController extends Controller {
+	/**
+	 * @description 글 생성
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
 	public async createPost(req: Request, res: Response, next: NextFunction) {
 		try {
 			let user = req.user as IUserSchema;
@@ -17,7 +23,12 @@ class PostController extends Controller {
 			next(err);
 		}
 	}
-
+	/**
+	 * @description 글 목록 열람
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
 	public async readPosts(req: Request, res: Response, next: NextFunction) {
 		try {
 			let posts = await Post.find();
@@ -27,7 +38,12 @@ class PostController extends Controller {
 			next(err);
 		}
 	}
-
+	/**
+	 * @description 글 열람
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
 	public async readPost(req: Request, res: Response, next: NextFunction) {
 		try {
 			let id = req.params.id;
@@ -39,7 +55,12 @@ class PostController extends Controller {
 			next(err);
 		}
 	}
-
+	/**
+	 * @description 글 갱신
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
 	public async updatePost(req: Request, res: Response, next: NextFunction) {
 		try {
 			let user = req.user as IUserSchema;
@@ -55,7 +76,12 @@ class PostController extends Controller {
 			next(err);
 		}
 	}
-
+	/**
+	 * @description 글 삭제
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
 	public async deletePost(req: Request, res: Response, next: NextFunction) {
 		try {
 			let user = req.user as IUserSchema;
