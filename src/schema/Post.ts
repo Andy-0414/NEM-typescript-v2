@@ -20,7 +20,7 @@ const PostSchema: Schema = new Schema({
 const NonUpdatableField = ["owner", "lastUpdateTime", "createdTime"];
 
 /**
- * @description User 스키마에 대한 메서드 ( document )
+ * @description Post 스키마에 대한 메서드 ( document )
  */
 export interface IPostSchema extends IPost, Document {
 	/**
@@ -36,7 +36,7 @@ export interface IPostSchema extends IPost, Document {
 }
 
 /**
- * @description User 모델에 대한 정적 메서드 ( collection )
+ * @description Post 모델에 대한 정적 메서드 ( collection )
  */
 export interface IPostModel extends Model<IPostSchema> {}
 
