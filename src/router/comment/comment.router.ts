@@ -4,12 +4,12 @@ import commentController from "./comment.controller";
 
 const router = Router();
 
-router.post("/", PassportJWTManager.authenticate(), commentController.createComment);
+router.post("/", PassportJWTManager.authenticate(), commentController.createComment); // Create
 
-router.get("/:id", commentController.readComment);
+router.get("/:id", commentController.readComment); // Read
 
-router.put("/:id", PassportJWTManager.authenticate(), commentController.updateComment);
+router.put("/:id", PassportJWTManager.authenticate(), commentController.updateComment); // Update
 
-router.delete("/:id", PassportJWTManager.authenticate(), commentController.deleteComment);
+router.delete("/:id", PassportJWTManager.authenticate(), commentController.deleteComment); // Delete
 
 export default router;
