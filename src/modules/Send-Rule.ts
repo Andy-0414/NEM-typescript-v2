@@ -1,7 +1,9 @@
 import { Response, Request, NextFunction } from "express";
 import Log from "./Log";
 import { ErrorHandleFunction } from "connect";
-
+/**
+ * @description 상태코드
+ */
 export enum HTTPRequestCode {
 	OK = 200,
 	CREATE = 201,
@@ -14,6 +16,9 @@ export enum HTTPRequestCode {
 
 	INTERNAL_SERVER_ERROR = 500
 }
+/**
+ * @description 상태코드를 포함한 에러
+ */
 export class StatusError extends Error {
 	status: HTTPRequestCode;
 	constructor(status: HTTPRequestCode, message?: string, name?: string) {
