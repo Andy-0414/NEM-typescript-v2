@@ -4,6 +4,9 @@ import { StrategyOptions, Strategy, ExtractJwt } from "passport-jwt";
 import User, { IUserToken } from "../schema/User";
 import { StatusError, HTTPRequestCode } from "./Send-Rule";
 
+/**
+ * @description 패스포트를 사용한 로그인 관리 클래스
+ */
 class PassportJWTManager {
 	private option: StrategyOptions = {
 		jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // Bearer Token (Header)

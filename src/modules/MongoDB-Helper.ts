@@ -1,5 +1,8 @@
 import * as mongoose from "mongoose";
 import Log from "./Log";
+/**
+ * @description Mongo DB 관리 클래스
+ */
 class DB {
 	private isDatabaseConnect: boolean = false;
 	private db: mongoose.Connection;

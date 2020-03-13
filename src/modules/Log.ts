@@ -2,6 +2,9 @@ import * as chalk from "chalk";
 import * as moment from "moment";
 import "moment-timezone";
 moment.tz.setDefault("Asia/Seoul");
+/**
+ * @description 로그 관리 클래스
+ */
 class Log {
 	/**
 	 * @description 현재 시간을 가져옵니다.
