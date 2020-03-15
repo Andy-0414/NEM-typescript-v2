@@ -29,29 +29,26 @@ npm start
 
 # Router
 
--   auth
+| Name         | URL                            | Method | Require Token | Request                                        | Response                          |
+| ------------ | ------------------------------ | ------ | ------------- | ---------------------------------------------- | --------------------------------- |
+| 회원가입     | /auth/users                    | POST   | X             | {email:String,password:String,username:String} | {result: true}                    |
+| 로그인       | /auth/users/login              | POST   | X             | {email:String,password:String}                 | {result: true,data:"TOKEN"}       |
+| 내정보       | /auth/users/my                 | POST   | O             | X                                              | {result:true,data:"USER_DATA"}    |
+| 내정보변경   | /auth/users/:id                | PUT    | O             | {username:String}                              | {result:true}                     |
+| 비밀번호변경 | /auth/users/:id/reset-password | POST   | O             | {password:String}                              | {result:true}                     |
+| 토큰재발급   | /auth/users/token              | POST   | O             | X                                              | {result: true,data:"TOKEN"}       |
+| 계정리스트   | /auth/users                    | GET    | X             | X                                              | {result: true,data:["USER DATA"]} |
+| 계정조회     | /auth/users/:id                | GET    | X             | X                                              | {result: true,data:"USER DATA"}   |
+| 계정삭제     | /auth/users/:id                | DELETE | O             |                                                | {result: true}                    |
 
-    -   POST /auth/users/login
-    -   POST /auth/users/my
-    -   POST /auth/users/token
-    -   POST /auth/users
-    -   GET /auth/users
-    -   GET /auth/users/:id
-    -   POST /auth/users/:id/reset-password
-    -   PUT /auth/users/:id
-    -   DELETE /auth/users/:id
+-   POST /post
+-   GET /post
+-   GET /post/:id
+-   PUT /post/:id
+-   DELETE /post/:id
 
--   post
-
-    -   POST /post
-    -   GET /post
-    -   GET /post/:id
-    -   PUT /post/:id
-    -   DELETE /post/:id
-
--   comment
-    -   POST /comment
-    -   GET /comment
-    -   GET /comment/:id
-    -   PUT /comment/:id
-    -   DELETE /comment/:id
+-   POST /comment
+-   GET /comment
+-   GET /comment/:id
+-   PUT /comment/:id
+-   DELETE /comment/:id
