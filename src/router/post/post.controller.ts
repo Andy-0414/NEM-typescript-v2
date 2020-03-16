@@ -47,7 +47,7 @@ class PostController extends Controller {
 	public async readPost(req: Request, res: Response, next: NextFunction) {
 		try {
 			let id = req.params.id;
-			let post = await Post.findOne({ _id: id });
+			let post = await Post.findById(id);
 
 			if (post) super.response(res, HTTPRequestCode.OK, post, "글 가져오기 성공");
 			else next(new StatusError(HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않음"));
@@ -67,7 +67,7 @@ class PostController extends Controller {
 			let id = req.params.id;
 			let postData = req.body as IPost;
 
-			let post = await Post.findOne({ _id: id });
+			let post = await Post.findById(id);
 			if (post) {
 				if (post.ownerPermissionCheck(user)) super.response(res, HTTPRequestCode.OK, await post.updateData(postData), "글 수정 성공");
 				else next(new StatusError(HTTPRequestCode.FORBIDDEN, "권한 없음"));
@@ -87,7 +87,7 @@ class PostController extends Controller {
 			let user = req.user as IUserSchema;
 			let id = req.params.id;
 
-			let post = await Post.findOne({ _id: id });
+			let post = await Post.findById(id);
 			if (post) {
 				if (post.ownerPermissionCheck(user)) super.response(res, HTTPRequestCode.NO_CONTENT, await post.remove(), "글 삭제 성공");
 				else next(new StatusError(HTTPRequestCode.FORBIDDEN, "권한 없음"));

@@ -42,6 +42,8 @@ class SendRule {
 				return "201 CREATE";
 			case HTTPRequestCode.ACCEPTED:
 				return "202 ACCEPTED";
+			case HTTPRequestCode.NO_CONTENT:
+				return "204 NO_CONTENT";
 			case HTTPRequestCode.BAD_REQUEST:
 				return "400 BAD_REQUEST";
 			case HTTPRequestCode.UNAUTHORIZED:
