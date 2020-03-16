@@ -80,7 +80,7 @@ class CommentController extends Controller {
 
 			let comment = await Comment.findOne({ _id: id });
 			if (comment) {
-				if (comment.ownerPermissionCheck(user)) super.response(res, HTTPRequestCode.OK, await comment.remove(), "글 삭제 성공");
+				if (comment.ownerPermissionCheck(user)) super.response(res, HTTPRequestCode.NO_CONTENT, await comment.remove(), "글 삭제 성공");
 				else next(new StatusError(HTTPRequestCode.FORBIDDEN, "권한 없음"));
 			} else next(new StatusError(HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않음"));
 		} catch (err) {

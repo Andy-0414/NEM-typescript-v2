@@ -153,7 +153,7 @@ class AuthController extends Controller {
 			let id = req.params.id;
 
 			if (user._id == id) {
-				super.response(res, HTTPRequestCode.OK, await user.remove(), "계정 삭제 성공");
+				super.response(res, HTTPRequestCode.NO_CONTENT, await user.remove(), "계정 삭제 성공");
 			} else {
 				next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
 			}
