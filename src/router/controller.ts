@@ -13,6 +13,7 @@ export default class Controller {
 	 * @param {boolean} result 성공 여부
 	 */
 	public response(res: Response, status: HTTPRequestCode, data?: any, message?: string, result: boolean = true) {
+		console.log("TEST");
 		res.status(status)
 			.send({
 				result,

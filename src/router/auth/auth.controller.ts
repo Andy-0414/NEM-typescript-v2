@@ -15,7 +15,7 @@ class AuthController extends Controller {
 			let loginData = req.body;
 			let user = await User.loginAuthentication(loginData);
 
-			this.response(res, HTTPRequestCode.OK, user.getUserToken(), "계정 로그인 성공");
+			super.response(res, HTTPRequestCode.OK, user.getUserToken(), "계정 로그인 성공");
 		} catch (err) {
 			next(err);
 		}
@@ -30,7 +30,7 @@ class AuthController extends Controller {
 		try {
 			let user = req.user as IUserSchema;
 
-			this.response(res, HTTPRequestCode.OK, user.getUserToken(), "토큰 갱신 성공");
+			super.response(res, HTTPRequestCode.OK, user.getUserToken(), "토큰 갱신 성공");
 		} catch (err) {
 			next(err);
 		}
@@ -44,7 +44,7 @@ class AuthController extends Controller {
 	public async my(req: Request, res: Response, next: NextFunction) {
 		let user = req.user as IUserSchema;
 
-		this.response(res, HTTPRequestCode.OK, user, "계정 정보 가져오기 성공");
+		super.response(res, HTTPRequestCode.OK, user, "계정 정보 가져오기 성공");
 	}
 
 	/**
@@ -58,7 +58,7 @@ class AuthController extends Controller {
 			let userData: IUser = req.body;
 			let user = await User.createUser(userData);
 
-			this.response(res, HTTPRequestCode.CREATE, user, "계정 생성 성공");
+			super.response(res, HTTPRequestCode.CREATE, user, "계정 생성 성공");
 		} catch (err) {
 			next(err);
 		}
@@ -74,7 +74,7 @@ class AuthController extends Controller {
 		try {
 			let users = await User.find();
 
-			this.response(res, HTTPRequestCode.OK, users, "계정 목록 가져오기 성공");
+			super.response(res, HTTPRequestCode.OK, users, "계정 목록 가져오기 성공");
 		} catch (err) {
 			next(err);
 		}
@@ -91,7 +91,7 @@ class AuthController extends Controller {
 			let id = req.params.id;
 
 			let users = await User.find({ _id: id }, { password: 0, salt: 0 });
-			this.response(res, HTTPRequestCode.OK, users, "계정 가져오기 성공");
+			super.response(res, HTTPRequestCode.OK, users, "계정 가져오기 성공");
 		} catch (err) {
 			next(err);
 		}
@@ -110,7 +110,7 @@ class AuthController extends Controller {
 
 			if (user._id == id) {
 				let password = req.body.password;
-				this.response(res, HTTPRequestCode.OK, await user.resetPassword(password), "계정 비밀번호 변경 성공");
+				super.response(res, HTTPRequestCode.OK, await user.resetPassword(password), "계정 비밀번호 변경 성공");
 			} else {
 				next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
 			}
@@ -132,7 +132,7 @@ class AuthController extends Controller {
 
 			if (user._id == id) {
 				let userInfo = req.body as IUser;
-				this.response(res, HTTPRequestCode.OK, await user.changeInfo(userInfo), "계정 정보 변경 성공");
+				super.response(res, HTTPRequestCode.OK, await user.changeInfo(userInfo), "계정 정보 변경 성공");
 			} else {
 				next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
 			}
@@ -153,7 +153,7 @@ class AuthController extends Controller {
 			let id = req.params.id;
 
 			if (user._id == id) {
-				this.response(res, HTTPRequestCode.OK, await user.remove(), "계정 삭제 성공");
+				super.response(res, HTTPRequestCode.OK, await user.remove(), "계정 삭제 성공");
 			} else {
 				next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
 			}

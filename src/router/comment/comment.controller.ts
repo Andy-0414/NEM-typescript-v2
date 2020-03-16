@@ -21,9 +21,9 @@ class CommentController extends Controller {
 			let post = await Post.findOne({ _id: commentData.post });
 			if (post) {
 				let comment = await new Comment(commentData).save();
-				this.response(res, HTTPRequestCode.CREATE, comment, "댓글 생성 성공");
+				super.response(res, HTTPRequestCode.CREATE, comment, "댓글 생성 성공");
 			} else {
-				this.response(res, HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않는 글");
+				super.response(res, HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않는 글");
 			}
 		} catch (err) {
 			next(err);
@@ -40,7 +40,7 @@ class CommentController extends Controller {
 			let id = req.params.id;
 			let comment = await Comment.findOne({ _id: id });
 
-			if (comment) this.response(res, HTTPRequestCode.OK, comment, "댓글 가져오기 성공");
+			if (comment) super.response(res, HTTPRequestCode.OK, comment, "댓글 가져오기 성공");
 			else next(new StatusError(HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않음"));
 		} catch (err) {
 			next(err);
@@ -60,7 +60,7 @@ class CommentController extends Controller {
 
 			let comment = await Comment.findOne({ _id: id });
 			if (comment) {
-				if (comment.ownerPermissionCheck(user)) this.response(res, HTTPRequestCode.OK, await comment.updateData(commentData), "글 수정 성공");
+				if (comment.ownerPermissionCheck(user)) super.response(res, HTTPRequestCode.OK, await comment.updateData(commentData), "글 수정 성공");
 				else next(new StatusError(HTTPRequestCode.FORBIDDEN, undefined, "권한 없음"));
 			} else next(new StatusError(HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않음"));
 		} catch (err) {
@@ -80,7 +80,7 @@ class CommentController extends Controller {
 
 			let comment = await Comment.findOne({ _id: id });
 			if (comment) {
-				if (comment.ownerPermissionCheck(user)) this.response(res, HTTPRequestCode.OK, await comment.remove(), "글 삭제 성공");
+				if (comment.ownerPermissionCheck(user)) super.response(res, HTTPRequestCode.OK, await comment.remove(), "글 삭제 성공");
 				else next(new StatusError(HTTPRequestCode.FORBIDDEN, "권한 없음"));
 			} else next(new StatusError(HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않음"));
 		} catch (err) {
