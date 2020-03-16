@@ -164,8 +164,7 @@ UserSchema.statics.loginAuthentication = async function(this: IUserModel, loginD
 			let password: string = isEncryptionPassword ? loginData.password : (await this.createEncryptionPassword(loginData.password, user.salt)).password;
 			let now: Date = new Date();
 			if (password == user.password) {
-				// 토큰을 이용한 로그인은 10분 주기로 갱신 필요 TODO: 유동적인 콘피그 파일 제작해야함
-				if (now.getTime() - loginData.lastLoginTime.getTime() <= (process.env.TOKEN_EXPIRATION || 600000) && !isEncryptionPassword) {
+				if (!isEncryptionPassword || now.getTime() - loginData.lastLoginTime.getTime() <= (process.env.TOKEN_EXPIRATION || 600000)) {
 					user.lastLoginTime = now;
 					return await user.save();
 				} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "만료된 토큰");
