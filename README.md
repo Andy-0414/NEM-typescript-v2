@@ -13,19 +13,23 @@ SECRET_KEY=STRING
 PORT=NUMBER
 TOKEN_EXPIRATION=NUMBER(ms)
 ```
-
+설치
 ```
 npm install
 ```
-
+배포
 ```
 npm start
+```
+개발
+```
+npm run serve
 ```
 
 # TODO LIST
 
 -   테스트 케이스 만들기 ( mocha )
--   라우터 문서 구체화해야함
+-   주석 개선
 
 # Router
 
