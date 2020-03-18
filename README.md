@@ -60,9 +60,3 @@ npm run serve
 | 댓글조회     | /comment/:id                   | GET    | X             | X                                              | {result: true,data:"COMMENT DATA"} |
 | 댓글갱신     | /comment/:id                   | PUT    | O             | {title:String,content:String}                  | {result: true,data:"COMMENT DATA"} |
 | 댓글삭제     | /comment/:id                   | DELETE | O             |                                                | {result: true,data:"COMMENT DATA"} |
-
--   POST /comment
--   GET /comment
--   GET /comment/:id
--   PUT /comment/:id
--   DELETE /comment/:id
