@@ -35,7 +35,6 @@ npm run serve
 # TODO LIST
 
 -   테스트 케이스 만들기 ( mocha )
--   주석 개선
 -   /post 에서 댓글 리스트 가져오기 만들어야함
 
 # Router
