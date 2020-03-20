@@ -164,7 +164,7 @@ UserSchema.statics.loginAuthentication = async function(this: IUserModel, loginD
 			let password: string = isEncryptionPassword ? loginData.password : (await this.createEncryptionPassword(loginData.password, user.salt)).password;
 			let now: Date = new Date();
 			if (password == user.password) {
-				// 최초 로그인이면 토큰 만료 시간을 무시함
+				// 최초 로그인이면 토큰 만료 시간을 무시함 ( 기본 만료 시간 10분 )
 				if (!isEncryptionPassword || now.getTime() - loginData.lastLoginTime.getTime() <= (process.env.TOKEN_EXPIRATION || 600000)) {
 					user.lastLoginTime = now;
 					return await user.save();
