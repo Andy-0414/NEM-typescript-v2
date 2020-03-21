@@ -3,6 +3,7 @@ import Post, { IPost } from "../../schema/Post";
 import { HTTPRequestCode, StatusError } from "../../modules/Send-Rule";
 import { IUserSchema } from "../../schema/User";
 import Controller from "../controller";
+import Comment from "../../schema/Comment";
 
 class PostController extends Controller {
 	/**
@@ -51,6 +52,24 @@ class PostController extends Controller {
 
 			if (post) super.response(res, HTTPRequestCode.OK, post, "글 가져오기 성공");
 			else next(new StatusError(HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않음"));
+		} catch (err) {
+			next(err);
+		}
+	}
+	/**
+	 * @description 해당 글 댓글 열람
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
+	public async readPostComments(req: Request, res: Response, next: NextFunction) {
+		try {
+			let id = req.params.id;
+			let post = await Post.findById(id);
+
+			if (post) {
+				super.response(res, HTTPRequestCode.OK, Comment.find({ post: post._id }), "해당 글 댓글 가져오기 성공");
+			} else next(new StatusError(HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않음"));
 		} catch (err) {
 			next(err);
 		}

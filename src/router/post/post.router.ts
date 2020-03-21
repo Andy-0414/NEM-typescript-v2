@@ -8,6 +8,7 @@ router.post("/", PassportJWTManager.authenticate(), postController.createPost); 
 
 router.get("/", postController.readPosts); // Read
 router.get("/:id", postController.readPost);
+router.get("/:id/get-comments", postController.readPostComments);
 
 router.put("/:id", PassportJWTManager.authenticate(), postController.updatePost); // Update
 
