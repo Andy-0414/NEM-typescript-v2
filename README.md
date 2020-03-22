@@ -35,8 +35,7 @@ npm run serve
 # TODO LIST
 
 -   테스트 케이스 만들기 ( mocha )
--   /post 에서 댓글 리스트 가져오기 만들어야함
--   프로필 사진 설정 만들어야함
+-   프로필 사진 설정 만들어야함 \*
 
 # Router
 
