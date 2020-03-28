@@ -115,6 +115,7 @@ UserSchema.methods.changeInfo = async function(this: IUserSchema, user: IUser): 
 };
 
 UserSchema.statics.getToken = function(this: IUserModel, data: IUser): string {
+	console.log(data);
 	let user: IUserToken = {
 		email: data.email,
 		password: data.password,
@@ -156,7 +157,7 @@ UserSchema.statics.createUser = async function(this: IUserModel, data: IUser): P
 
 UserSchema.statics.loginAuthentication = async function(this: IUserModel, loginData: IUserToken, isEncryptionPassword: boolean = false) {
 	try {
-		let user: IUserSchema = await this.findOne({ email: loginData.email }, { password: 1, salt: 1 });
+		let user: IUserSchema = await this.findOne({ email: loginData.email }, "email password salt lastLoginTime");
 		if (!user) {
 			throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "존재하지 않는 계정");
 		} else {
@@ -165,7 +166,7 @@ UserSchema.statics.loginAuthentication = async function(this: IUserModel, loginD
 			let now: Date = new Date();
 			if (password == user.password) {
 				// 최초 로그인이면 토큰 만료 시간을 무시함 ( 기본 만료 시간 10분 )
-				if (!isEncryptionPassword || now.getTime() - loginData.lastLoginTime.getTime() <= (process.env.TOKEN_EXPIRATION || 600000)) {
+				if (!isEncryptionPassword || now.getTime() - new Date(loginData.lastLoginTime).getTime() <= (process.env.TOKEN_EXPIRATION || 600000)) {
 					user.lastLoginTime = now;
 					return await user.save();
 				} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "만료된 토큰");

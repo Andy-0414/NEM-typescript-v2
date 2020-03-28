@@ -14,7 +14,6 @@ class AuthController extends Controller {
 		try {
 			let loginData = req.body;
 			let user = await User.loginAuthentication(loginData);
-
 			super.response(res, HTTPRequestCode.OK, user.getUserToken(), "계정 로그인 성공");
 		} catch (err) {
 			next(err);

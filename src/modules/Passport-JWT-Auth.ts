@@ -18,7 +18,7 @@ class PassportJWTManager {
 		passport.use(
 			new Strategy(this.option, async (data: IUserToken, done) => {
 				try {
-					let user = await User.loginAuthentication(data, true);
+                    let user = await User.loginAuthentication(data, true);
 					if (user) done(null, user);
 					else new StatusError(HTTPRequestCode.UNAUTHORIZED, "인증 실패");
 				} catch (err) {
