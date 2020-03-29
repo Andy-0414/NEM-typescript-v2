@@ -1,6 +1,6 @@
 import { Model, Document, Schema, model, HookNextFunction } from "mongoose";
-import * as jwt from "jwt-simple";
-import * as crypto from "crypto";
+import jwt from "jwt-simple";
+import crypto from "crypto";
 import { HTTPRequestCode, StatusError } from "../modules/Send-Rule";
 import Post from "./Post";
 import Comment from "./Comment";

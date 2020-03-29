@@ -1,4 +1,4 @@
-import * as passport from "passport";
+import passport from "passport";
 import { Handler } from "express";
 import { StrategyOptions, Strategy, ExtractJwt } from "passport-jwt";
 import User, { IUserToken } from "../schema/User";

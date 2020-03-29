@@ -4,7 +4,8 @@
 		"target": "es6",
 		"moduleResolution": "node",
 		"sourceMap": true,
-		"outDir": "dist.ts"
+        "outDir": "dist.ts",
+        "esModuleInterop": true
 	},
 	"include": ["src/**/*"],
 	"exclude": ["node_modules", ".vscode"]

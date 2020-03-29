@@ -1,5 +1,5 @@
-import * as chalk from "chalk";
-import * as moment from "moment";
+import chalk from "chalk";
+import moment from "moment";
 import "moment-timezone";
 moment.tz.setDefault("Asia/Seoul");
 /**

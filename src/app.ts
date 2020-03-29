@@ -1,8 +1,8 @@
-import * as express from "express";
-import * as cors from "cors";
-import * as helmet from "helmet";
-import * as compression from "compression";
-import * as morgan from "morgan";
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import compression from "compression";
+import morgan from "morgan";
 
 import "dotenv/config";
 import Log from "./modules/Log";
