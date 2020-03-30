@@ -38,6 +38,7 @@ npm run serve
 -   프로필 사진 설정 만들어야함
 -   env 상세 설명 추가해야함
 -   cors 설정
+-   개발용 환경변수 추가하기
 
 # Router
 
