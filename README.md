@@ -9,6 +9,11 @@ Node.js + Express + MongoDB + Typescript 를 사용하여 서버 탬플릿을 �
 .env
 
 ```
+NODE_ENV=STRING
+
+DB_NAME=STRING
+DB_URL=STRING
+
 SECRET_KEY=STRING
 PORT=NUMBER
 TOKEN_EXPIRATION=NUMBER(ms)

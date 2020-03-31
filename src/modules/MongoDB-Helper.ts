@@ -6,6 +6,10 @@ import Log from "./Log";
 class DB {
 	private isDatabaseConnect: boolean = false;
 	private db: mongoose.Connection;
+
+	public env: string = process.env.NODE_ENV || "development";
+	public dbName: string = process.env.DB_NAME || `NEM-TEMPLATE-V2_${this.env}`;
+	public dbUrl: string = process.env.DB_URL || "mongodb://localhost/NEM-TEMPLATE-V2";
 	/**
 	 * @description MongoDB 활성화
 	 * @param {string}url MongoDB URL
@@ -14,18 +18,18 @@ class DB {
 		this.db = mongoose.connection;
 		// 접속 실패 시
 		this.db.on("error", () => {
-			Log.e("Mongo DB 연결 실패");
+			Log.e("Mongo DB connect fail");
 			this.isDatabaseConnect = false;
 		});
 		// 접속 성공 시
 		this.db.once("open", () => {
-			Log.c("Mongo DB 연결 성공");
+			Log.c("Mongo DB connect");
 			this.isDatabaseConnect = true;
 		});
 
 		mongoose.set("useCreateIndex", true);
 		mongoose.set("useUnifiedTopology", true);
-		mongoose.connect(url || process.env.DB_URL || "mongodb://localhost/NEM-TEMPLATE-V2", { useNewUrlParser: true });
+		mongoose.connect(url || this.dbUrl, { dbName: this.dbName, useNewUrlParser: true, useUnifiedTopology: true });
 	}
 	/**
 	 * @description DB 연결 여부 확인
