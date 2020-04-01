@@ -3,15 +3,23 @@ import path from "path";
 import Log from "./Log";
 
 class ProjectInitializeManager {
-	public env: string = process.env.NODE_ENV || "development";
+	public readonly ENV_LIST: string[] = ["NODE_ENV", "DB_NAME", "DB_URL", "SECRET_KEY", "PORT", "TOKEN_EXPIRATION"];
+    public readonly REQUIRED: string[] = ["NODE_ENV", "PORT"];
+    
+    public readonly env: string = process.env.NODE_ENV || "development";
 	checkEnv() {
-		Log.i(`NODE_ENV : ${this.env}`);
+		let informationString = `────────ENV (${this.env})────────`;
+		Log.i(informationString);
 		try {
-			fs.accessSync(path.join(__dirname, ".env"), fs.constants.F_OK);
+			fs.accessSync(".env", fs.constants.F_OK);
+			this.REQUIRED.forEach(key => {
+				let env = process.env[key];
+				if (!env) Log.w(`${key} was not found in the .env file.`);
+			});
 		} catch (err) {
 			Log.e(".env file not found");
 		}
-		// TODO: ENV 개인설정 만들어야함
+		Log.i(new Array(informationString.length).fill("─").join(""));
 	}
 }
 

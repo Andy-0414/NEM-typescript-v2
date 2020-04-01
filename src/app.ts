@@ -13,6 +13,7 @@ import Router from "./router/index";
 import ProjectInitializeManager from "./modules/Project-Initialize-Manager";
 
 const app: express.Application = express(); // 서버 객체
+const port = process.env.PORT || 3000;
 
 app.use(morgan("dev")); // 개발용 로그 미들웨어
 app.use(cors()); // CORS 설정 미들웨어
@@ -24,10 +25,10 @@ app.use(express.urlencoded({ limit: "20mb", extended: true })); // urlencode 지
 app.use(express.json({ limit: "20mb" })); // json 지원
 app.use(PassportJWTManager.getInitialize());
 
-app.listen(process.env.PORT || 3000, () => {
-    // 서버가 열렸을 시 콜백
-    // TODO: 로그 통일화 시켜야함
-	Log.i(`server port : ${process.env.PORT || 3000}`);
+app.listen(port, () => {
+	// 서버가 열렸을 시 콜백
+	Log.i(`port : ${port}`);
+	if (!process.env.PORT) Log.w("Port is not set. The default port 3000.");
 });
 
 ProjectInitializeManager.checkEnv();

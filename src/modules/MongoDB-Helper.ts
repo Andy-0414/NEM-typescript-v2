@@ -7,9 +7,9 @@ class DB {
 	private isDatabaseConnect: boolean = false;
 	private db: mongoose.Connection;
 
-	public env: string = process.env.NODE_ENV || "development";
-	public dbName: string = process.env.DB_NAME || `NEM-TEMPLATE-V2_${this.env}`;
-	public dbUrl: string = process.env.DB_URL || "mongodb://localhost/NEM-TEMPLATE-V2";
+	public readonly env: string = process.env.NODE_ENV || "development";
+	public readonly dbName: string = process.env.DB_NAME || `NEM-TEMPLATE-V2_${this.env}`;
+	public readonly dbUrl: string = process.env.DB_URL || "mongodb://localhost/NEM-TEMPLATE-V2";
 	/**
 	 * @description MongoDB 활성화
 	 * @param {string}url MongoDB URL
@@ -28,7 +28,8 @@ class DB {
 		});
 
 		mongoose.set("useCreateIndex", true);
-		mongoose.set("useUnifiedTopology", true);
+        mongoose.set("useUnifiedTopology", true);
+        // TODO: DB 로그인 env에 추가해야함
 		mongoose.connect(url || this.dbUrl, { dbName: this.dbName, useNewUrlParser: true, useUnifiedTopology: true });
 	}
 	/**
