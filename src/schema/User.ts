@@ -157,7 +157,6 @@ UserSchema.statics.createUser = async function(this: IUserModel, data: IUser): P
 
 UserSchema.statics.loginAuthentication = async function(this: IUserModel, loginData: IUserToken, isEncryptionPassword: boolean = false) {
 	try {
-		// FIXME: mongoose select 변경
 		let user: IUserSchema = await this.findOne({ email: loginData.email }, "+password +salt");
 		console.log(user);
 		if (!user) {

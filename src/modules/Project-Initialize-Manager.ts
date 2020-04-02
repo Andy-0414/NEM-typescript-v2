@@ -3,10 +3,10 @@ import path from "path";
 import Log from "./Log";
 
 class ProjectInitializeManager {
-	public readonly ENV_LIST: string[] = ["NODE_ENV", "DB_NAME", "DB_URL", "SECRET_KEY", "PORT", "TOKEN_EXPIRATION"];
-    public readonly REQUIRED: string[] = ["NODE_ENV", "PORT"];
-    
-    public readonly env: string = process.env.NODE_ENV || "development";
+	public readonly ENV_LIST: string[] = ["NODE_ENV", "DB_NAME", "DB_URL", "SECRET_KEY", "PORT", "TOKEN_EXPIRATION", "REQUEST_URI"];
+	public readonly REQUIRED: string[] = ["NODE_ENV", "PORT"];
+
+	public readonly env: string = process.env.NODE_ENV || "development";
 	checkEnv() {
 		let informationString = `────────ENV (${this.env})────────`;
 		Log.i(informationString);
