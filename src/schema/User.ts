@@ -19,7 +19,7 @@ export interface IUserToken extends IUserDefaultLogin {
 export interface IUser extends IUserToken {
 	username: string;
 	salt?: string;
-	imagePath?: string;
+	imgPath?: string;
 	lastLoginTime?: Date;
 	createdTime?: Date;
 }
