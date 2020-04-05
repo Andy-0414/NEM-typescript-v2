@@ -9,13 +9,13 @@ Node.js + Express + MongoDB + Typescript 를 사용하여 서버 탬플릿을 �
 .env
 
 ```
-NODE_ENV=STRING
+NODE_ENV=STRING // 개발환경 'development' , 'production'
 
 DB_NAME=STRING
 DB_URL=STRING
 
 SECRET_KEY=STRING
-PORT=NUMBER
+PORT=NUMBER // default 3000
 TOKEN_EXPIRATION=NUMBER(ms)
 ```
 
@@ -41,7 +41,6 @@ npm run serve
 
 -   테스트 케이스 만들기 ( mocha )
 -   프로필 사진 설정 만들어야함
--   env 상세 설명 추가해야함
 -   이메인 인증 추가하기
 
 # Router
