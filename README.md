@@ -10,6 +10,7 @@ Node.js + Express + MongoDB + Typescript 를 사용하여 서버 탬플릿을 �
 
 ```
 NODE_ENV=STRING // 개발환경 'development' , 'production'
+REQUEST_URI=STRING // 배포 URL
 
 DB_NAME=STRING
 DB_URL=STRING
