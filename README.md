@@ -20,16 +20,13 @@ PORT=NUMBER // default 3000
 TOKEN_EXPIRATION=NUMBER(ms)
 ```
 
-설치
+실행
 
 ```
 npm install
-```
-
-배포
-
-```
 npm start
+```
+
 ```
 
 개발
@@ -42,7 +39,7 @@ npm run serve
 
 -   테스트 케이스 만들기 ( mocha )
 -   프로필 사진 설정 만들어야함
--   이메인 인증 추가하기
+-   이메인 인증 추가하기 // node mailer
 
 # Router
 
