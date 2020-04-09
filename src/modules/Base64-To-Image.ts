@@ -7,7 +7,7 @@ class Base64ToImage {
 	 * @description base64를 이미지파일로 변환합니다.
 	 * @param base64
 	 */
-	getImageData(base64: string) {
+	getImageData(base64: string): Base64Image {
 		let splitData = base64.split(",");
 		let imgType = null;
 		if (splitData.length > 1) {

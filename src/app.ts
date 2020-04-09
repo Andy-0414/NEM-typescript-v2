@@ -11,6 +11,7 @@ import SendRule from "./modules/Send-Rule";
 import PassportJWTManager from "./modules/Passport-JWT-Auth";
 import Router from "./router/index";
 import ProjectInitializeManager from "./modules/Project-Initialize-Manager";
+import ResourceManager from "./modules/Resource-Manager";
 
 const app: express.Application = express(); // 서버 객체
 const port = process.env.PORT || 3000;

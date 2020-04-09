@@ -8,18 +8,19 @@ class ProjectInitializeManager {
 
 	public readonly env: string = process.env.NODE_ENV || "development";
 	checkEnv() {
+		let UNDIFINED_REQUIRED = this.REQUIRED.filter((key: string) => !process.env[key]);
+
 		let informationString = `────────ENV (${this.env})────────`;
-		Log.i(informationString);
+		!UNDIFINED_REQUIRED.length || Log.i(informationString);
 		try {
 			fs.accessSync(".env", fs.constants.F_OK);
-			this.REQUIRED.forEach(key => {
-				let env = process.env[key];
-				if (!env) Log.w(`${key} was not found in the .env file.`);
+			UNDIFINED_REQUIRED.forEach((key: string) => {
+				Log.w(`${key} was not found in the .env file.`);
 			});
 		} catch (err) {
 			Log.e(".env file not found");
 		}
-		Log.i(new Array(informationString.length).fill("─").join(""));
+		!UNDIFINED_REQUIRED.length || Log.i(new Array(informationString.length).fill("─").join(""));
 	}
 }
 
