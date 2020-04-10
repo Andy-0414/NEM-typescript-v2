@@ -40,7 +40,7 @@ npm run serve
 # TODO LIST
 
 -   테스트 케이스 만들기 ( mocha )
--   프로필 사진 설정 만들어야함
+-   입력값 유효성 검사
 -   이메인 인증 추가하기 // node mailer
 
 # Router
