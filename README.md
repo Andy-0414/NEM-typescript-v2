@@ -32,7 +32,9 @@ npm start
 개발
 
 ```
+
 npm run serve
+
 ```
 
 # TODO LIST
@@ -50,6 +52,7 @@ npm run serve
 | 내정보       | /auth/users/my                 | POST   | O             | X                                              | {result:true,data:"USER_DATA"}       |
 | 내정보변경   | /auth/users/:id                | PUT    | O             | {username:String}                              | {result:true}                        |
 | 비밀번호변경 | /auth/users/:id/reset-password | POST   | O             | {password:String}                              | {result:true}                        |
+| 비밀번호변경 | /auth/users/:id/change-profile-image | POST   | O             | {img:Base64}                              | {result:true}                        |
 | 토큰재발급   | /auth/users/token              | POST   | O             | X                                              | {result: true,data:"TOKEN"}          |
 | 계정리스트   | /auth/users                    | GET    | X             | X                                              | {result: true,data:["USER DATA"]}    |
 | 계정조회     | /auth/users/:id                | GET    | X             | X                                              | {result: true,data:"USER DATA"}      |
@@ -64,3 +67,4 @@ npm run serve
 | 댓글조회     | /comment/:id                   | GET    | X             | X                                              | {result: true,data:"COMMENT DATA"}   |
 | 댓글갱신     | /comment/:id                   | PUT    | O             | {title:String,content:String}                  | {result: true,data:"COMMENT DATA"}   |
 | 댓글삭제     | /comment/:id                   | DELETE | O             |                                                | {result: true,data:"COMMENT DATA"}   |
+```

@@ -14,6 +14,7 @@ router.get("/users", authController.getAllUsers);
 router.get("/users/:id", authController.getUser);
 
 router.post("/users/:id/reset-password", PassportJWTManager.authenticate(), authController.resetPassword);
+router.post("/users/:id/change-profile-image", PassportJWTManager.authenticate(), authController.changeProfileImage);
 router.put("/users/:id", PassportJWTManager.authenticate(), authController.changeInfo);
 router.delete("/users/:id", PassportJWTManager.authenticate(), authController.deleteUser);
 

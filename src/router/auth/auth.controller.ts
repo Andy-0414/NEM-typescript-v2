@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import User, { IUser, IUserSchema } from "../../schema/User";
 import { HTTPRequestCode, StatusError } from "../../modules/Send-Rule";
 import Controller from "../controller";
+import ResourceManager from "../../modules/Resource-Manager";
+import Base64ToImage from "../../modules/Base64-To-Image";
 
 class AuthController extends Controller {
 	/**
@@ -110,6 +112,28 @@ class AuthController extends Controller {
 			if (user._id == id) {
 				let password = req.body.password;
 				super.response(res, HTTPRequestCode.OK, await user.resetPassword(password), "계정 비밀번호 변경 성공");
+			} else {
+				next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
+			}
+		} catch (err) {
+			next(err);
+		}
+	}
+	/**
+	 * @description 계정 비민번호를 변경함
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
+	public async changeProfileImage(req: Request, res: Response, next: NextFunction) {
+		try {
+			let user = req.user as IUserSchema;
+			let id = req.params.id;
+			let imageData = Base64ToImage.getImageData(req.body.img);
+
+			if (user._id == id) {
+				user.imgPath = await ResourceManager.save("user", `${id}.${imageData.imgType}`, imageData.imgFile);
+				super.response(res, HTTPRequestCode.OK, await user.save(), "계정 비밀번호 변경 성공");
 			} else {
 				next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
 			}
