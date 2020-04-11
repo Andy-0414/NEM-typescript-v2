@@ -41,7 +41,7 @@ class CommentController extends Controller {
 			let comment = await Comment.findById(id);
 
 			if (comment) return super.response(res, HTTPRequestCode.OK, comment, "댓글 가져오기 성공");
-			else next(new StatusError(HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않음"));
+			else return next(new StatusError(HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않음"));
 		} catch (err) {
 			return next(err);
 		}
@@ -61,7 +61,7 @@ class CommentController extends Controller {
 			let comment = await Comment.findById(id);
 			if (comment) {
 				if (comment.ownerPermissionCheck(user)) return super.response(res, HTTPRequestCode.OK, await comment.updateData(commentData), "글 수정 성공");
-				else next(new StatusError(HTTPRequestCode.FORBIDDEN, undefined, "권한 없음"));
+				else return next(new StatusError(HTTPRequestCode.FORBIDDEN, undefined, "권한 없음"));
 			} else return next(new StatusError(HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않음"));
 		} catch (err) {
 			next(err);
