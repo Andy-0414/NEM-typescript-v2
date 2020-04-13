@@ -52,7 +52,7 @@ npm run serve
 | 내정보       | /auth/users/my                 | POST   | O             | X                                              | {result:true,data:"USER_DATA"}       |
 | 내정보변경   | /auth/users/:id                | PUT    | O             | {username:String}                              | {result:true}                        |
 | 비밀번호변경 | /auth/users/:id/reset-password | POST   | O             | {password:String}                              | {result:true}                        |
-| 비밀번호변경 | /auth/users/:id/change-profile-image | POST   | O             | {img:Base64}                              | {result:true}                        |
+| 프로필이미지변경 | /auth/users/:id/change-profile-image | POST   | O             | {img:Base64}                              | {result:true}                        |
 | 토큰재발급   | /auth/users/token              | POST   | O             | X                                              | {result: true,data:"TOKEN"}          |
 | 계정리스트   | /auth/users                    | GET    | X             | X                                              | {result: true,data:["USER DATA"]}    |
 | 계정조회     | /auth/users/:id                | GET    | X             | X                                              | {result: true,data:"USER DATA"}      |
