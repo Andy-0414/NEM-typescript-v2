@@ -1,5 +1,4 @@
 import { Model, Schema, Document, model, HookNextFunction } from "mongoose";
-import { ObjectID } from "bson";
 import { IUserSchema } from "./User";
 import Comment from "./Comment";
 
