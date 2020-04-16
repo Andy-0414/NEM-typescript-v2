@@ -27,8 +27,6 @@ npm install
 npm start
 ```
 
-```
-
 개발
 
 ```
