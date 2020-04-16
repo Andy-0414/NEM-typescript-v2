@@ -10,6 +10,7 @@ import DB from "./modules/MongoDB-Helper";
 import SendRule from "./modules/Send-Rule";
 import PassportJWTManager from "./modules/Passport-JWT-Auth";
 import Router from "./router/index";
+import Socket from "./socket/index";
 import ProjectInitializeManager from "./modules/Project-Initialize-Manager";
 
 const app: express.Application = express(); // 서버 객체
@@ -25,7 +26,7 @@ app.use(express.urlencoded({ limit: "20mb", extended: true })); // urlencode 지
 app.use(express.json({ limit: "20mb" })); // json 지원
 app.use(PassportJWTManager.getInitialize());
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
 	// 서버가 열렸을 시 콜백
 	Log.i(`port : ${port}`);
 	if (!process.env.PORT) Log.w("Port is not set. The default port 3000.");
@@ -36,5 +37,7 @@ DB.init(); // DB 연결
 
 app.use(Router); // 라우터 연결
 app.use(SendRule.autoErrorHandler()); // 에러 핸들링
+
+Socket.start(server)
 
 export default app;
