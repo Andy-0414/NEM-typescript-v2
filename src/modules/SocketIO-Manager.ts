@@ -5,9 +5,8 @@ export type SocketRouter = (io: SocketIO.Server, socket: SocketIO.Socket) => voi
 class SocketIOManager {
 	public defaultRoutesPath = "/socket";
 	/**
-	 * @description router 폴더 안에 있는 모든 라우터를 가져옴
-	 * @param {path}routePath 라우터 주소 ( default : /router )
-	 * @returns {RouterPath[]} 라우터와 주소가 담긴 배열 반환
+	 * @description socket 폴더 안에 있는 모든 소켓를 가져옴
+	 * @returns {SocketRouter[]} 소켓 라우터를 반환함
 	 */
 	public getSockets(currentPath: string = "/"): SocketRouter[] {
 		const socketPath: string = path.resolve(__dirname, `../${this.defaultRoutesPath}`, `./${currentPath}`);

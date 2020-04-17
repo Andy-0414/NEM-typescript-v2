@@ -9,7 +9,6 @@ class RouterManager {
 	public defaultRoutesPath = "/router";
 	/**
 	 * @description router 폴더 안에 있는 모든 라우터를 가져옴
-	 * @param {path}routePath 라우터 주소 ( default : /router )
 	 * @returns {RouterPath[]} 라우터와 주소가 담긴 배열 반환
 	 */
 	public getRouters(currentPath: string = "/"): RouterPath[] {
