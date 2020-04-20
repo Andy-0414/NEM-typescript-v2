@@ -40,6 +40,7 @@ npm run serve
 -   테스트 케이스 만들기 ( mocha )
 -   입력값 유효성 검사
 -   이메인 인증 추가하기 // node mailer
+-   라우터, 소켓 설명 추가해야함
 
 # Router
 
