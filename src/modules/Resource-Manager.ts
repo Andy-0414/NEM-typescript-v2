@@ -1,7 +1,13 @@
 import path from "path";
 import { promises as fs } from "fs";
+/**
+ * @description 리소스를 관리하는 모듈입니다.
+ */
 class ResourceManager {
 	defaultPath = "public/";
+	/**
+	 * @description /public/${folderPath}/${filename} 에 file을 저장합니다.
+	 */
 	async save(folderPath: string, filename: string, file: Buffer): Promise<string> {
 		let filepath = path.join(this.defaultPath, folderPath, filename);
 		try {

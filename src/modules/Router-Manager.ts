@@ -5,6 +5,9 @@ export interface RouterPath {
 	router: Router;
 	path: string;
 }
+/**
+ * @description 라우터를 관리하는 모듈입니다.
+ */
 class RouterManager {
 	public defaultRoutesPath = "/router";
 	/**

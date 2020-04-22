@@ -1,7 +1,9 @@
 import fs, { StatsBase } from "fs";
 import path from "path";
 export type SocketRouter = (io: SocketIO.Server, socket: SocketIO.Socket) => void;
-
+/**
+ * @description 소켓을 관리하는 모듈입니다.
+ */
 class SocketIOManager {
 	public defaultRoutesPath = "/socket";
 	/**

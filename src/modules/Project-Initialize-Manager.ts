@@ -1,11 +1,18 @@
 import fs from "fs";
 import Log from "./Log";
-
+/**
+ * @description .env 등의 프로젝트 설정을 다룹니다.
+ */
 class ProjectInitializeManager {
+	// .env 환경 변수 리스트
 	public readonly ENV_LIST: string[] = ["NODE_ENV", "DB_NAME", "DB_URL", "SECRET_KEY", "PORT", "TOKEN_EXPIRATION", "REQUEST_URI"];
+	// 필수 환경 변수 리스트
 	public readonly REQUIRED: string[] = ["NODE_ENV", "PORT"];
 
 	public readonly env: string = process.env.NODE_ENV || "development";
+	/**
+	 * @description .env를 체크합니다.
+	 */
 	checkEnv() {
 		let UNDIFINED_REQUIRED = this.REQUIRED.filter((key: string) => !process.env[key]);
 
