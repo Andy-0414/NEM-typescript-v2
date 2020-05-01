@@ -35,9 +35,9 @@ npm run serve
 
 ```
 # AUTO ROUTING
-router 폴더 안에 ***.router.ts 파일을 자동으로 인식하여 라우팅해줍니다.
+router 폴더 안에 ***.router.ts 파일을 자동으로 인식하여 라우팅해줍니다. (Router-Manager.ts 에서 바꿀 수 있음)
 
-socket 폴더 안에 ***.socket.ts 파일을 자동으로 인식하여 소켓에 등록시킵니다.
+socket 폴더 안에 ***.socket.ts 파일을 자동으로 인식하여 소켓에 등록시킵니다. (Socket-Manager.ts 에서 바꿀 수 있음)
 
 # TODO LIST
 
