@@ -4,7 +4,7 @@ import app from "../../app";
 describe("ROUTER /auth/users", () => {
 	let token: string = "";
 	let userData: any = {};
-	it("return createUSer", (done) => {
+	it("createUSer", (done) => {
 		request(app)
 			.post("/auth/users")
 			.send({ email: "test", password: "test" })
@@ -20,7 +20,7 @@ describe("ROUTER /auth/users", () => {
 				}
 			});
 	});
-	it("return login", (done) => {
+	it("login", (done) => {
 		request(app)
 			.post("/auth/users/login")
 			.send({ email: "test", password: "test" })
@@ -36,7 +36,7 @@ describe("ROUTER /auth/users", () => {
 				}
 			});
 	});
-	it("return getUserData", (done) => {
+	it("getUserData", (done) => {
 		request(app)
 			.post("/auth/users/my")
 			.set("Authorization", token)
@@ -47,7 +47,7 @@ describe("ROUTER /auth/users", () => {
 				else return done();
 			});
 	});
-	it("return deleteUser", (done) => {
+	it("deleteUser", (done) => {
 		request(app)
 			.delete(`/auth/users/${userData._id}`)
 			.set("Authorization", token)
