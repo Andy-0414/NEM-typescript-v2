@@ -30,7 +30,7 @@ const UserSchema: Schema = new Schema({
 	salt: { type: String, default: process.env.SECRET_KEY || "SECRET", select: false },
 	imgPath: { type: String, default: "" },
 	lastLoginTime: { type: Date, default: Date.now },
-	createdTime: { type: Date, default: Date.now }
+	createdTime: { type: Date, default: Date.now },
 });
 const NonUpdatableField = ["email", "password", "salt", "lastLoginTime", "createdTime"];
 
@@ -87,12 +87,12 @@ export interface IUserModel extends Model<IUserSchema> {
 	loginAuthentication(loginData: IUserToken, isEncryptionPassword?: boolean): Promise<IUserSchema>;
 }
 
-UserSchema.methods.getUserToken = function(this: IUserSchema): string {
+UserSchema.methods.getUserToken = function (this: IUserSchema): string {
 	let constructor = this.constructor as IUserModel;
 	return constructor.getToken(this);
 };
 
-UserSchema.methods.resetPassword = async function(this: IUserSchema, password: string): Promise<IUserSchema> {
+UserSchema.methods.resetPassword = async function (this: IUserSchema, password: string): Promise<IUserSchema> {
 	try {
 		let constructor = this.constructor as IUserModel;
 		let encryptionPassword = await constructor.createEncryptionPassword(password);
@@ -103,9 +103,9 @@ UserSchema.methods.resetPassword = async function(this: IUserSchema, password: s
 		throw err;
 	}
 };
-UserSchema.methods.changeInfo = async function(this: IUserSchema, user: IUser): Promise<IUserSchema> {
+UserSchema.methods.changeInfo = async function (this: IUserSchema, user: IUser): Promise<IUserSchema> {
 	try {
-		Object.keys(user).forEach(key => {
+		Object.keys(user).forEach((key) => {
 			if (NonUpdatableField.indexOf(key) == -1) this[key] = user[key];
 		});
 		return await this.save();
@@ -114,21 +114,20 @@ UserSchema.methods.changeInfo = async function(this: IUserSchema, user: IUser): 
 	}
 };
 
-UserSchema.statics.getToken = function(this: IUserModel, data: IUser): string {
-	console.log(data);
+UserSchema.statics.getToken = function (this: IUserModel, data: IUser): string {
 	let user: IUserToken = {
 		email: data.email,
 		password: data.password,
-		lastLoginTime: data.lastLoginTime
+		lastLoginTime: data.lastLoginTime,
 	};
 	return "Bearer " + jwt.encode(user, process.env.SECRET_KEY || "SECRET");
 };
 
-UserSchema.statics.createEncryptionPassword = async function(this: IUserModel, password: string, salt?: string): Promise<EncryptionPassword> {
+UserSchema.statics.createEncryptionPassword = async function (this: IUserModel, password: string, salt?: string): Promise<EncryptionPassword> {
 	try {
 		let data: EncryptionPassword = {
 			password: "",
-			salt: salt || ""
+			salt: salt || "",
 		};
 		data.salt = data.salt || (await crypto.randomBytes(64).toString("base64"));
 		data.password = crypto.pbkdf2Sync(password, data.salt, 10000, 64, "sha512").toString("base64");
@@ -138,7 +137,7 @@ UserSchema.statics.createEncryptionPassword = async function(this: IUserModel, p
 	}
 };
 
-UserSchema.statics.createUser = async function(this: IUserModel, data: IUser): Promise<IUserSchema> {
+UserSchema.statics.createUser = async function (this: IUserModel, data: IUser): Promise<IUserSchema> {
 	try {
 		if ("email" in data && "password" in data) {
 			if (await this.findOne({ email: data.email })) throw new StatusError(HTTPRequestCode.BAD_REQUEST, "이미 존재하는 계정");
@@ -155,10 +154,9 @@ UserSchema.statics.createUser = async function(this: IUserModel, data: IUser): P
 	}
 };
 
-UserSchema.statics.loginAuthentication = async function(this: IUserModel, loginData: IUserToken, isEncryptionPassword: boolean = false) {
+UserSchema.statics.loginAuthentication = async function (this: IUserModel, loginData: IUserToken, isEncryptionPassword: boolean = false) {
 	try {
 		let user: IUserSchema = await this.findOne({ email: loginData.email }, "+password +salt");
-		console.log(user);
 		if (!user) {
 			throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "존재하지 않는 계정");
 		} else {
@@ -179,7 +177,7 @@ UserSchema.statics.loginAuthentication = async function(this: IUserModel, loginD
 };
 
 // CASCADE 구현
-UserSchema.pre("remove", async function(this: IUserSchema, next: HookNextFunction) {
+UserSchema.pre("remove", async function (this: IUserSchema, next: HookNextFunction) {
 	try {
 		let post = await Post.remove({ owner: this._id });
 		let comment = await Comment.remove({ owner: this._id });
