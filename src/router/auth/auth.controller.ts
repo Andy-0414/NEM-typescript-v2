@@ -128,8 +128,8 @@ class AuthController extends Controller {
 	public async changeProfileImage(req: Request, res: Response, next: NextFunction) {
 		try {
 			let user = req.user as IUserSchema;
-            let id = req.params.id;
-            if(!req.body.img) return next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청")); 
+			let id = req.params.id;
+			if (!req.body.img) return next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
 			let imageData = Base64ToImage.getImageData(req.body.img);
 
 			if (user._id == id) {
@@ -177,7 +177,7 @@ class AuthController extends Controller {
 			let id = req.params.id;
 
 			if (user._id == id) {
-				return super.response(res, HTTPRequestCode.NO_CONTENT, await user.remove(), "계정 삭제 성공");
+				return super.response(res, HTTPRequestCode.NO_CONTENT, await User.deleteOne(user), "계정 삭제 성공");
 			} else {
 				return next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
 			}
