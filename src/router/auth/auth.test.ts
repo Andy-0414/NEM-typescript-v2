@@ -1,8 +1,9 @@
 import request from "supertest";
 import app from "../../app";
 
-describe("ROUTER /auth/users", () => {
+describe("/auth/users", () => {
 	let token: string = "";
+	// 회원가입
 	let userData: any = {};
 	it("createUSer", (done) => {
 		request(app)
@@ -20,7 +21,8 @@ describe("ROUTER /auth/users", () => {
 				}
 			});
 	});
-	it("login", (done) => {
+	// 로그인 (토큰 발급)
+	it("POST /auth/users/login", (done) => {
 		request(app)
 			.post("/auth/users/login")
 			.send({ email: "test", password: "test" })
@@ -36,7 +38,8 @@ describe("ROUTER /auth/users", () => {
 				}
 			});
 	});
-	it("getUserData", (done) => {
+	// 내 정보 확인
+	it("POST /auth/users/my", (done) => {
 		request(app)
 			.post("/auth/users/my")
 			.set("Authorization", token)
@@ -47,7 +50,8 @@ describe("ROUTER /auth/users", () => {
 				else return done();
 			});
 	});
-	it("deleteUser", (done) => {
+	// 계정 삭제
+	it("DELETE /auth/users/{_id}", (done) => {
 		request(app)
 			.delete(`/auth/users/${userData._id}`)
 			.set("Authorization", token)
