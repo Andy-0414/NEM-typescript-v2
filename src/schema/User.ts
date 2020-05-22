@@ -33,6 +33,7 @@ const UserSchema: Schema = new Schema({
 	createdTime: { type: Date, default: Date.now },
 });
 const NonUpdatableField = ["email", "password", "salt", "lastLoginTime", "createdTime"];
+const TESTUSER_NAME = process.env.TESTUSER_NAME || "testuser";
 
 /**
  * @description User 스키마에 대한 메서드 ( document )
@@ -85,6 +86,17 @@ export interface IUserModel extends Model<IUserSchema> {
 	 * @returns {Promise<IUserSchema>} 로그인 성공 시 계정를 반환합니다.
 	 */
 	loginAuthentication(loginData: IUserToken, isEncryptionPassword?: boolean): Promise<IUserSchema>;
+	/**
+	 * @description 이메일로 계정을 찾을 수 없다
+	 * @param {string}email 평문 비밀번호가 아닐 시 (토큰 사용 로그인 시)
+	 * @returns {Promise<IUserSchema>} 계정이 있을 시 반환합니다.
+	 */
+	findByEmail(email: string): Promise<IUserSchema>;
+	/**
+	 * @description 테스트 계정 생성
+	 * @returns {Promise<IUserSchema>} 테스트 계정 생성 성공 시 반환합니다.
+	 */
+	createTestUser(): Promise<IUserSchema>;
 }
 
 UserSchema.methods.getUserToken = function (this: IUserSchema): string {
@@ -140,7 +152,7 @@ UserSchema.statics.createEncryptionPassword = async function (this: IUserModel, 
 UserSchema.statics.createUser = async function (this: IUserModel, data: IUser): Promise<IUserSchema> {
 	try {
 		if ("email" in data && "password" in data) {
-			if (await this.findOne({ email: data.email })) throw new StatusError(HTTPRequestCode.BAD_REQUEST, "이미 존재하는 계정");
+			if (await this.findByEmail(data.email)) throw new StatusError(HTTPRequestCode.BAD_REQUEST, "이미 존재하는 계정");
 			let encryptionPassword = await this.createEncryptionPassword(data.password);
 			data.password = encryptionPassword.password;
 			data.salt = encryptionPassword.salt;
@@ -170,6 +182,27 @@ UserSchema.statics.loginAuthentication = async function (this: IUserModel, login
 					return await user.save();
 				} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "만료된 토큰");
 			} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "비밀번호가 일치하지 않음");
+		}
+	} catch (err) {
+		throw err;
+	}
+};
+
+UserSchema.statics.findByEmail = async function (this: IUserModel, email: string): Promise<IUserSchema | null> {
+	try {
+		return await this.findOne({ email });
+	} catch (err) {
+		throw err;
+	}
+};
+
+UserSchema.statics.createTestUser = async function (this: IUserModel) {
+	try {
+		let user: IUserSchema | null = await this.findByEmail(TESTUSER_NAME);
+		if (!user) {
+			return await this.createUser({ email: TESTUSER_NAME, password: TESTUSER_NAME, username: TESTUSER_NAME });
+		} else {
+			return user;
 		}
 	} catch (err) {
 		throw err;

@@ -1,9 +1,10 @@
-import { Model, Schema, Document, model, HookNextFunction } from "mongoose";
+import { Model, Schema, Document, model, HookNextFunction, Mongoose } from "mongoose";
 import { IUserSchema } from "./User";
 import Comment from "./Comment";
+import { ObjectID } from "bson";
 
 export interface IPost {
-	owner: Schema.Types.ObjectId;
+	owner: ObjectID;
 	title: string;
 	content: string;
 	lastUpdateTime: Date;
@@ -14,7 +15,7 @@ const PostSchema: Schema = new Schema({
 	title: { type: String, required: true },
 	content: { type: String, required: true },
 	lastUpdateTime: { type: Date, default: Date.now },
-	createdTime: { type: Date, default: Date.now }
+	createdTime: { type: Date, default: Date.now },
 });
 const NonUpdatableField = ["owner", "lastUpdateTime", "createdTime"];
 
@@ -39,13 +40,13 @@ export interface IPostSchema extends IPost, Document {
  */
 export interface IPostModel extends Model<IPostSchema> {}
 
-PostSchema.methods.ownerPermissionCheck = function(this: IPostSchema, user: IUserSchema): boolean {
-	return this.owner == user._id;
+PostSchema.methods.ownerPermissionCheck = function (this: IPostSchema, user: IUserSchema): boolean {
+	return (this.owner as ObjectID).equals(user._id); // TODO: ObjectID
 };
 
-PostSchema.methods.updaetData = async function(this: IPostSchema, post: IPost): Promise<IPostSchema> {
+PostSchema.methods.updateData = async function (this: IPostSchema, post: IPost): Promise<IPostSchema> {
 	try {
-		Object.keys(post).forEach(key => {
+		Object.keys(post).forEach((key) => {
 			if (NonUpdatableField.indexOf(key) == -1) this[key] = post[key];
 		});
 		return await this.save();
@@ -54,7 +55,7 @@ PostSchema.methods.updaetData = async function(this: IPostSchema, post: IPost): 
 	}
 };
 
-PostSchema.pre("remove", async function(this: IPostSchema, next: HookNextFunction) {
+PostSchema.pre("remove", async function (this: IPostSchema, next: HookNextFunction) {
 	try {
 		let comment = await Comment.remove({ post: this._id });
 		next();

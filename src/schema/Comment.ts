@@ -1,8 +1,9 @@
 import { Model, Schema, Document, model } from "mongoose";
 import { IUserSchema } from "./User";
+import { ObjectID } from "bson";
 
 export interface IComment {
-	post: Schema.Types.ObjectId;
+	post: ObjectID;
 	owner: Schema.Types.ObjectId;
 	content: string;
 	lastUpdateTime: Date;
@@ -13,7 +14,7 @@ const CommentSchema: Schema = new Schema({
 	owner: { type: Schema.Types.ObjectId, required: true, ref: "User" },
 	content: { type: String, required: true },
 	lastUpdateTime: { type: Date, default: Date.now },
-	createdTime: { type: Date, default: Date.now }
+	createdTime: { type: Date, default: Date.now },
 });
 const NonUpdatableField = ["post", "owner", "lastUpdateTime", "createdTime"];
 
@@ -38,13 +39,13 @@ export interface ICommentSchema extends IComment, Document {
  */
 export interface ICommentModel extends Model<ICommentSchema> {}
 
-CommentSchema.methods.ownerPermissionCheck = function(this: ICommentSchema, user: ICommentSchema): boolean {
+CommentSchema.methods.ownerPermissionCheck = function (this: ICommentSchema, user: ICommentSchema): boolean {
 	return this.owner == user._id;
 };
 
-CommentSchema.methods.updaetData = async function(this: ICommentSchema, comment: IComment): Promise<ICommentSchema> {
+CommentSchema.methods.updateData = async function (this: ICommentSchema, comment: IComment): Promise<ICommentSchema> {
 	try {
-		Object.keys(comment).forEach(key => {
+		Object.keys(comment).forEach((key) => {
 			if (NonUpdatableField.indexOf(key) == -1) this[key] = comment[key];
 		});
 		return await this.save();

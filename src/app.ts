@@ -15,9 +15,13 @@ import ProjectInitializeManager from "./modules/Project-Initialize-Manager";
 
 const app: express.Application = express(); // 서버 객체
 const port = process.env.PORT || 3000;
+const NODE_ENV = process.env.NODE_ENV;
 
-app.use(morgan("dev")); // 개발용 로그 미들웨어
-app.use(cors({ origin: process.env.NODE_ENV === "development" ? "*" : process.env.REQUEST_URI || "*" })); // CORS 설정 미들웨어
+// 테스트 코드일 시 따로 처리
+if (NODE_ENV == "TEST") Log.disableConsole();
+else app.use(morgan("dev")); // 서비스 시 로그 출력
+
+app.use(cors({ origin: NODE_ENV === "development" ? "*" : process.env.REQUEST_URI || "*" })); // CORS 설정 미들웨어
 app.use(helmet()); // 보안 미들웨어
 app.use(compression()); // 데이터 압축 미들웨어
 
@@ -33,11 +37,12 @@ const server = app.listen(port, () => {
 });
 
 ProjectInitializeManager.checkEnv();
+
 DB.init(); // DB 연결
 
 app.use(Router); // 라우터 연결
 app.use(SendRule.autoErrorHandler()); // 에러 핸들링
 
-Socket.start(server)
+Socket.start(server);
 
 export default app;
