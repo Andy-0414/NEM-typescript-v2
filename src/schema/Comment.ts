@@ -4,7 +4,7 @@ import { ObjectID } from "bson";
 
 export interface IComment {
 	post: ObjectID;
-	owner: Schema.Types.ObjectId;
+	owner: ObjectID;
 	content: string;
 	lastUpdateTime: Date;
 	createTime: Date;
@@ -40,7 +40,7 @@ export interface ICommentSchema extends IComment, Document {
 export interface ICommentModel extends Model<ICommentSchema> {}
 
 CommentSchema.methods.ownerPermissionCheck = function (this: ICommentSchema, user: ICommentSchema): boolean {
-	return this.owner == user._id;
+	return (this.owner as ObjectID).equals(user._id);
 };
 
 CommentSchema.methods.updateData = async function (this: ICommentSchema, comment: IComment): Promise<ICommentSchema> {

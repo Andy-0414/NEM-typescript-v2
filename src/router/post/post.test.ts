@@ -1,12 +1,13 @@
 import request from "supertest";
 import app from "../../app";
 import { ResponseData } from "../controller";
-import { IPost, IPostSchema } from "../../schema/Post";
+import { IPostSchema } from "../../schema/Post";
 const TESTUSER_NAME = process.env.TESTUSER_NAME || "testuser";
 
 describe("/post", () => {
 	let token: string = "";
 	let postData: IPostSchema | null = null;
+
 	request(app)
 		.post("/auth/users/login")
 		.send({ email: TESTUSER_NAME, password: TESTUSER_NAME })
@@ -16,6 +17,7 @@ describe("/post", () => {
 			let body: ResponseData = res.body;
 			token = body.data;
 		});
+
 	it("POST /post", (done) => {
 		if (token)
 			request(app)
@@ -41,7 +43,7 @@ describe("/post", () => {
 				.put(`/post/${postData._id}`)
 				.send({ title: "Test_Fix", content: "Test_Fix" })
 				.set("Authorization", token)
-				.expect(204)
+				.expect(200)
 				.end((err, res) => {
 					let body: ResponseData = res.body;
 					if (body.result) {
