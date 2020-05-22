@@ -9,6 +9,8 @@ describe("/post", () => {
 	let token: string = "";
 	let postData: IPostSchema | null = null;
 	let commentData: ICommentSchema | null = null;
+
+	// 로그인 & 글 쓰기
 	request(app)
 		.post("/auth/users/login")
 		.send({ email: TESTUSER_NAME, password: TESTUSER_NAME })
@@ -30,6 +32,8 @@ describe("/post", () => {
 					}
 				});
 		});
+
+	// 댓글 생성
 	it("POST /comment", (done) => {
 		if (token && postData)
 			request(app)
@@ -49,6 +53,7 @@ describe("/post", () => {
 				});
 		else done("NO LOGIN");
 	});
+	// 댓글 수정
 	it("PUT /comment/{_id}", (done) => {
 		if (postData && commentData && token)
 			request(app)
@@ -66,6 +71,7 @@ describe("/post", () => {
 				});
 		else done("NO LOGIN");
 	});
+	// 댓글 삭제
 	it("DELETE /comment/{_id}", (done) => {
 		if (postData && commentData && token)
 			request(app)

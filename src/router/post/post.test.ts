@@ -8,6 +8,7 @@ describe("/post", () => {
 	let token: string = "";
 	let postData: IPostSchema | null = null;
 
+	// 로그인
 	request(app)
 		.post("/auth/users/login")
 		.send({ email: TESTUSER_NAME, password: TESTUSER_NAME })
@@ -18,6 +19,7 @@ describe("/post", () => {
 			token = body.data;
 		});
 
+	// 글 작성
 	it("POST /post", (done) => {
 		if (token)
 			request(app)
@@ -37,6 +39,7 @@ describe("/post", () => {
 				});
 		else done("NO LOGIN");
 	});
+	// 글 수정
 	it("PUT /post/{_id}", (done) => {
 		if (postData && token)
 			request(app)
@@ -54,6 +57,7 @@ describe("/post", () => {
 				});
 		else done("NO LOGIN");
 	});
+	// 글 삭제
 	it("DELETE /post/{_id}", (done) => {
 		if (postData && token)
 			request(app)
