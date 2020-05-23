@@ -35,65 +35,59 @@ describe("/post", () => {
 
 	// 댓글 생성
 	it("POST /comment", (done) => {
-		if (token && postData)
-			request(app)
-				.post("/comment")
-				.send({ content: "Test", post: postData._id } as IComment)
-				.expect("Content-Type", /json/)
-				.set("Authorization", token)
-				.expect(201)
-				.end((err, res) => {
-					let body: ResponseData = res.body;
-					if (body.result) {
-						commentData = body.data;
-						done();
-					} else {
-						done(err);
-					}
-				});
-		else done("NO LOGIN");
+		request(app)
+			.post("/comment")
+			.send({ content: "Test", post: postData._id } as IComment)
+			.expect("Content-Type", /json/)
+			.set("Authorization", token)
+			.expect(201)
+			.end((err, res) => {
+				let body: ResponseData = res.body;
+				if (body.result) {
+					commentData = body.data;
+					done();
+				} else {
+					done(err);
+				}
+			});
 	});
 	// 댓글 수정
 	it("PUT /comment/{_id}", (done) => {
-		if (postData && commentData && token)
-			request(app)
-				.put(`/comment/${commentData._id}`)
-				.send({ title: "Test_Fix", content: "Test_Fix" })
-				.set("Authorization", token)
-				.expect(200)
-				.end((err, res) => {
-					let body: ResponseData = res.body;
-					if (body.result) {
-						done();
-					} else {
-						done(err);
-					}
-				});
-		else done("NO LOGIN");
+		request(app)
+			.put(`/comment/${commentData._id}`)
+			.send({ title: "Test_Fix", content: "Test_Fix" })
+			.set("Authorization", token)
+			.expect(200)
+			.end((err, res) => {
+				let body: ResponseData = res.body;
+				if (body.result) {
+					done();
+				} else {
+					done(err);
+				}
+			});
 	});
 	// 댓글 삭제
 	it("DELETE /comment/{_id}", (done) => {
-		if (postData && commentData && token)
-			request(app)
-				.delete(`/comment/${commentData._id}`)
-				.set("Authorization", token)
-				.expect(204)
-				.end((err, res) => {
-					let body: ResponseData = res.body;
-					if (body.result) {
-						request(app)
-							.delete(`/post/${postData._id}`)
-							.expect("Content-Type", /json/)
-							.set("Authorization", token)
-							.expect(204)
-							.end((err, res) => {
-								console.log(res.body);
-								done();
-							});
-					} else {
-						done(err);
-					}
-				});
-		else done("NO LOGIN");
+		request(app)
+			.delete(`/comment/${commentData._id}`)
+			.set("Authorization", token)
+			.expect(204)
+			.end((err, res) => {
+				let body: ResponseData = res.body;
+				if (body.result) {
+					request(app)
+						.delete(`/post/${postData._id}`)
+						.expect("Content-Type", /json/)
+						.set("Authorization", token)
+						.expect(204)
+						.end((err, res) => {
+							console.log(res.body);
+							done();
+						});
+				} else {
+					done(err);
+				}
+			});
 	});
 });

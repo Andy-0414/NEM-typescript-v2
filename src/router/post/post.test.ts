@@ -21,58 +21,52 @@ describe("/post", () => {
 
 	// 글 작성
 	it("POST /post", (done) => {
-		if (token)
-			request(app)
-				.post("/post")
-				.send({ title: "Test", content: "Test" })
-				.expect("Content-Type", /json/)
-				.set("Authorization", token)
-				.expect(200)
-				.end((err, res) => {
-					let body: ResponseData = res.body;
-					if (body.result) {
-						postData = body.data;
-						done();
-					} else {
-						done(err);
-					}
-				});
-		else done("NO LOGIN");
+		request(app)
+			.post("/post")
+			.send({ title: "Test", content: "Test" })
+			.expect("Content-Type", /json/)
+			.set("Authorization", token)
+			.expect(200)
+			.end((err, res) => {
+				let body: ResponseData = res.body;
+				if (body.result) {
+					postData = body.data;
+					done();
+				} else {
+					done(err);
+				}
+			});
 	});
 	// 글 수정
 	it("PUT /post/{_id}", (done) => {
-		if (postData && token)
-			request(app)
-				.put(`/post/${postData._id}`)
-				.send({ title: "Test_Fix", content: "Test_Fix" })
-				.set("Authorization", token)
-				.expect(200)
-				.end((err, res) => {
-					let body: ResponseData = res.body;
-					if (body.result) {
-						done();
-					} else {
-						done(err);
-					}
-				});
-		else done("NO LOGIN");
+		request(app)
+			.put(`/post/${postData._id}`)
+			.send({ title: "Test_Fix", content: "Test_Fix" })
+			.set("Authorization", token)
+			.expect(200)
+			.end((err, res) => {
+				let body: ResponseData = res.body;
+				if (body.result) {
+					done();
+				} else {
+					done(err);
+				}
+			});
 	});
 	// 글 삭제
 	it("DELETE /post/{_id}", (done) => {
-		if (postData && token)
-			request(app)
-				.delete(`/post/${postData._id}`)
-				.set("Authorization", token)
-				.expect(204)
-				.end((err, res) => {
-					let body: ResponseData = res.body;
-					if (body.result) {
-						postData = body.data;
-						done();
-					} else {
-						done(err);
-					}
-				});
-		else done("NO LOGIN");
+		request(app)
+			.delete(`/post/${postData._id}`)
+			.set("Authorization", token)
+			.expect(204)
+			.end((err, res) => {
+				let body: ResponseData = res.body;
+				if (body.result) {
+					postData = body.data;
+					done();
+				} else {
+					done(err);
+				}
+			});
 	});
 });
