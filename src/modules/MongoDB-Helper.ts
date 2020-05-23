@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Log from "./Log";
+import User from "../schema/User";
 /**
  * @description Mongo DB 관리 클래스
  */
@@ -27,6 +28,9 @@ class DB {
 		this.db.once("open", () => {
 			Log.c("Mongo DB connect");
 			this.isDatabaseConnect = true;
+			User.createTestUser().then((user) => {
+				if (user) Log.c("Create Test User");
+			});
 		});
 
 		mongoose.set("useCreateIndex", true);

@@ -5,7 +5,7 @@ import Log from "./Log";
  */
 class ProjectInitializeManager {
 	// .env 환경 변수 리스트
-	public readonly ENV_LIST: string[] = ["NODE_ENV", "DB_NAME", "DB_URL", "SECRET_KEY", "PORT", "TOKEN_EXPIRATION", "REQUEST_URI"];
+	public readonly ENV_LIST: string[] = ["NODE_ENV", "DB_NAME", "DB_URL", "SECRET_KEY", "PORT", "TOKEN_EXPIRATION", "REQUEST_URI","TESTUSER_NAME"];
 	// 필수 환경 변수 리스트
 	public readonly REQUIRED: string[] = ["NODE_ENV", "PORT"];
 

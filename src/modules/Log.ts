@@ -6,6 +6,19 @@ moment.tz.setDefault("Asia/Seoul");
  * @description 로그 관리 클래스
  */
 class Log {
+	public isConsoleOutput: boolean = true;
+	/**
+	 * @description 콘솔을 끕니다.
+	 */
+	public enableConsole(): void {
+		this.isConsoleOutput = true;
+	}
+	/**
+	 * @description 콘솔을 킵니다
+	 */
+	public disableConsole(): void {
+		this.isConsoleOutput = false;
+	}
 	/**
 	 * @description 현재 시간을 가져옵니다.
 	 * @returns {string} 현재 시간을 문자열로 반환 ( YYYY-MM-DD HH:mm:ss )
@@ -14,8 +27,10 @@ class Log {
 		return moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
 	}
 	private _defaultLogFormat(str: string): boolean {
-		console.log(chalk.grey(`[${this.getTime()}] `) + str);
-		return true;
+		if (this.isConsoleOutput) {
+			console.log(chalk.grey(`[${this.getTime()}] `) + str);
+			return true;
+		} else return false;
 	}
 	/**
 	 * @description 디버그 로그입니다.

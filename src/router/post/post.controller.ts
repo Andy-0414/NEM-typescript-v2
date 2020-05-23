@@ -108,7 +108,7 @@ class PostController extends Controller {
 
 			let post = await Post.findById(id);
 			if (post) {
-				if (post.ownerPermissionCheck(user)) return super.response(res, HTTPRequestCode.NO_CONTENT, await post.remove(), "글 삭제 성공");
+				if (post.ownerPermissionCheck(user)) return super.response(res, HTTPRequestCode.NO_CONTENT, await Post.deleteOne(post), "글 삭제 성공");
 				else return next(new StatusError(HTTPRequestCode.FORBIDDEN, "권한 없음"));
 			} else return next(new StatusError(HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않음"));
 		} catch (err) {

@@ -3,6 +3,11 @@ import { Response } from "express";
 /**
  * @description 라우터 내장 함수들
  */
+export interface ResponseData {
+	result: boolean;
+	data: any;
+	message?: string;
+}
 export default class Controller {
 	/**
 	 * @description 데이터 리스폰스 규격
@@ -17,7 +22,7 @@ export default class Controller {
 			.send({
 				result,
 				data,
-				message: message || SendRule.HTTPRequestCodeToMessage(status)
+				message: message || SendRule.HTTPRequestCodeToMessage(status),
 			})
 			.end();
 	}
