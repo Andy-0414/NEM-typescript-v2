@@ -15,7 +15,7 @@ export enum HTTPRequestCode {
 	FORBIDDEN = 403,
 	NOT_FOUND = 404,
 
-	INTERNAL_SERVER_ERROR = 500
+	INTERNAL_SERVER_ERROR = 500,
 }
 /**
  * @description 상태코드를 포함한 에러

@@ -11,7 +11,7 @@ describe("/auth/users", () => {
 	it("POST /auth/users", (done) => {
 		request(app)
 			.post("/auth/users")
-			.send({ email: TESTUSER_NAME, password: TESTUSER_NAME })
+			.send({ userID: TESTUSER_NAME, password: TESTUSER_NAME })
 			.expect("Content-Type", /json/)
 			.expect(200)
 			.end((err, res) => {
@@ -28,7 +28,7 @@ describe("/auth/users", () => {
 	it("POST /auth/users/login", (done) => {
 		request(app)
 			.post("/auth/users/login")
-			.send({ email: TESTUSER_NAME, password: TESTUSER_NAME })
+			.send({ userID: TESTUSER_NAME, password: TESTUSER_NAME })
 			.expect("Content-Type", /json/)
 			.expect(200)
 			.end((err, res) => {

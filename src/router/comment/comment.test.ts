@@ -13,7 +13,7 @@ describe("/post", () => {
 	// 로그인 & 글 쓰기
 	request(app)
 		.post("/auth/users/login")
-		.send({ email: TESTUSER_NAME, password: TESTUSER_NAME })
+		.send({ userID: TESTUSER_NAME, password: TESTUSER_NAME })
 		.expect("Content-Type", /json/)
 		.expect(200)
 		.end((err, res) => {
@@ -82,7 +82,6 @@ describe("/post", () => {
 						.set("Authorization", token)
 						.expect(204)
 						.end((err, res) => {
-							console.log(res.body);
 							done();
 						});
 				} else {

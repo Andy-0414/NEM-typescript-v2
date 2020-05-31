@@ -21,12 +21,12 @@ class DB {
 		this.db = mongoose.connection;
 		// 접속 실패 시
 		this.db.on("error", () => {
-			Log.e("Mongo DB connect fail");
+			Log.e("Mongo DB connected fail");
 			this.isDatabaseConnect = false;
 		});
 		// 접속 성공 시
 		this.db.once("open", () => {
-			Log.c("Mongo DB connect");
+			Log.c("Mongo DB connected");
 			this.isDatabaseConnect = true;
 			User.createTestUser().then((user) => {
 				if (user) Log.c("Create Test User");

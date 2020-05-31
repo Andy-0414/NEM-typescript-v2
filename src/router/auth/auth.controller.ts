@@ -4,6 +4,8 @@ import { HTTPRequestCode, StatusError } from "../../modules/Send-Rule";
 import Controller from "../controller";
 import ResourceManager from "../../modules/Resource-Manager";
 import Base64ToImage from "../../modules/Base64-To-Image";
+import PassportManager from "../../modules/Passport-Manager";
+import Passport from "passport";
 
 class AuthController extends Controller {
 	/**
@@ -14,15 +16,21 @@ class AuthController extends Controller {
 	 */
 	public async login(req: Request, res: Response, next: NextFunction) {
 		try {
-			let loginData = req.body;
-			let user = await User.loginAuthentication(loginData);
-			return super.response(res, HTTPRequestCode.OK, user.getUserToken(), "계정 로그인 성공");
+			if (PassportManager.SESSION) {
+				let user = await User.findByUserID((req.user as IUserSchema).userID);
+				return super.response(res, HTTPRequestCode.OK, user.toJSON(), "계정 로그인 성공");
+			} else {
+				let loginData = req.body;
+				let user = await User.loginAuthentication(loginData);
+				if ((user.loginType = "local")) return super.response(res, HTTPRequestCode.OK, user.getUserToken(), "계정 로그인 성공");
+				else return next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
+			}
 		} catch (err) {
 			return next(err);
 		}
 	}
 	/**
-	 * @description 토큰 재발급
+	 * @description 토큰 재발급, 세션이 켜져있을 시 정보 반환
 	 * @param {Request}req Express req
 	 * @param {Response}res Express res
 	 * @param {NextFunction}next Express next
@@ -30,8 +38,8 @@ class AuthController extends Controller {
 	public async getToken(req: Request, res: Response, next: NextFunction) {
 		try {
 			let user = req.user as IUserSchema;
-
-			return super.response(res, HTTPRequestCode.OK, user.getUserToken(), "토큰 갱신 성공");
+			if (PassportManager.SESSION) return super.response(res, HTTPRequestCode.OK, user.toJSON(), "계정 정보 가져오기 성공");
+			else return super.response(res, HTTPRequestCode.OK, user.getUserToken(), "토큰 갱신 성공");
 		} catch (err) {
 			return next(err);
 		}
@@ -45,7 +53,7 @@ class AuthController extends Controller {
 	public async my(req: Request, res: Response, next: NextFunction) {
 		let user = req.user as IUserSchema;
 
-		return super.response(res, HTTPRequestCode.OK, user, "계정 정보 가져오기 성공");
+		return super.response(res, HTTPRequestCode.OK, user.toJSON(), "계정 정보 가져오기 성공");
 	}
 
 	/**

@@ -34,7 +34,7 @@ class RouterManager {
 			}
 			result.push({
 				path: currentPath.replace(/\\/g, "/"),
-				router
+				router,
 			});
 		}
 		return result;

@@ -10,30 +10,35 @@ export interface EncryptionPassword {
 	salt: string;
 }
 export interface IUserDefaultLogin {
-	email: string;
+	userID: string;
 	password: string;
 }
 export interface IUserToken extends IUserDefaultLogin {
 	lastLoginTime?: Date;
 }
 export interface IUser extends IUserToken {
-	username: string;
+	loginType?: string;
+	username?: string;
+	email?: string;
 	salt?: string;
 	imgPath?: string;
 	lastLoginTime?: Date;
 	createdTime?: Date;
 }
 const UserSchema: Schema = new Schema({
-	email: { type: String, required: true, unique: true },
+	loginType: { type: String, default: "local" },
+	username: { type: String, default: "User" },
+	email: { type: String, default: "" },
 	password: { type: String, required: true, select: false },
-	username: { type: String, default: "" },
+	userID: { type: String, required: true, unique: true },
 	salt: { type: String, default: process.env.SECRET_KEY || "SECRET", select: false },
 	imgPath: { type: String, default: "" },
 	lastLoginTime: { type: Date, default: Date.now },
 	createdTime: { type: Date, default: Date.now },
 });
-const NonUpdatableField = ["email", "password", "salt", "lastLoginTime", "createdTime"];
+const NonUpdatableField = ["userID", "password", "salt", "lastLoginTime", "createdTime"];
 const TESTUSER_NAME = process.env.TESTUSER_NAME || "testuser";
+const TOKEN_EXPIRATION = Number(process.env.TOKEN_EXPIRATION) || 600000;
 
 /**
  * @description User 스키마에 대한 메서드 ( document )
@@ -56,6 +61,11 @@ export interface IUserSchema extends IUser, Document {
 	 * @returns {Promise<IUserSchema>} 변경된 계정를 반환합니다.
 	 */
 	changeInfo(user: IUser): Promise<IUserSchema>;
+	/**
+	 * @description 중요 정보를 숨기고 객체화 시킵니다.
+	 * @returns {Promise<IUserSchema>} 변환된 객체를 반환합니다.
+	 */
+	changeInfo(): IUser;
 }
 
 /**
@@ -83,15 +93,16 @@ export interface IUserModel extends Model<IUserSchema> {
 	 * @description 이메일과 패스워드로 로그인을 시도합니다
 	 * @param loginData 로그인 정보
 	 * @param {boolean}isEncryptionPassword 평문 비밀번호가 아닐 시 (토큰 사용 로그인 시)
+	 * @param {boolean}isPasswordSkip 비밀번호 무시 (세션 정보로 로그인 정보 갱신 시)
 	 * @returns {Promise<IUserSchema>} 로그인 성공 시 계정를 반환합니다.
 	 */
-	loginAuthentication(loginData: IUserToken, isEncryptionPassword?: boolean): Promise<IUserSchema>;
+	loginAuthentication(loginData: IUserToken, isEncryptionPassword?: boolean, isPasswordSkip?: boolean): Promise<IUserSchema>;
 	/**
-	 * @description 이메일로 계정을 찾을 수 없다
-	 * @param {string}email 평문 비밀번호가 아닐 시 (토큰 사용 로그인 시)
+	 * @description 유저 아이디로 계정을 찾을 수 없다
+	 * @param {string}userID 유저 아이디
 	 * @returns {Promise<IUserSchema>} 계정이 있을 시 반환합니다.
 	 */
-	findByEmail(email: string): Promise<IUserSchema>;
+	findByUserID(userID: string): Promise<IUserSchema>;
 	/**
 	 * @description 테스트 계정 생성
 	 * @returns {Promise<IUserSchema>} 테스트 계정 생성 성공 시 반환합니다.
@@ -125,10 +136,16 @@ UserSchema.methods.changeInfo = async function (this: IUserSchema, user: IUser):
 		throw err;
 	}
 };
+UserSchema.methods.toJSON = function (this: IUserSchema): IUser {
+	let json = this.toObject();
+	delete json["password"];
+	delete json["salt"];
+	return json;
+};
 
 UserSchema.statics.getToken = function (this: IUserModel, data: IUser): string {
 	let user: IUserToken = {
-		email: data.email,
+		userID: data.userID,
 		password: data.password,
 		lastLoginTime: data.lastLoginTime,
 	};
@@ -151,8 +168,8 @@ UserSchema.statics.createEncryptionPassword = async function (this: IUserModel, 
 
 UserSchema.statics.createUser = async function (this: IUserModel, data: IUser): Promise<IUserSchema> {
 	try {
-		if ("email" in data && "password" in data) {
-			if (await this.findByEmail(data.email)) throw new StatusError(HTTPRequestCode.BAD_REQUEST, "이미 존재하는 계정");
+		if ("userID" in data && "password" in data) {
+			if (await this.findByUserID(data.userID)) throw new StatusError(HTTPRequestCode.BAD_REQUEST, "이미 존재하는 계정");
 			let encryptionPassword = await this.createEncryptionPassword(data.password);
 			data.password = encryptionPassword.password;
 			data.salt = encryptionPassword.salt;
@@ -166,31 +183,37 @@ UserSchema.statics.createUser = async function (this: IUserModel, data: IUser): 
 	}
 };
 
-UserSchema.statics.loginAuthentication = async function (this: IUserModel, loginData: IUserToken, isEncryptionPassword: boolean = false) {
+UserSchema.statics.loginAuthentication = async function (this: IUserModel, loginData: IUserToken, isEncryptionPassword: boolean = false, isPasswordSkip: boolean = false) {
 	try {
-		let user: IUserSchema = await this.findOne({ email: loginData.email }, "+password +salt");
+		let user: IUserSchema = await this.findOne({ userID: loginData.userID }, "+password +salt");
+		let now: Date = new Date();
+
 		if (!user) {
 			throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "존재하지 않는 계정");
 		} else {
-			// 평문 비밀번호는 암호화된 비밀번호로 변환
-			let password: string = isEncryptionPassword ? loginData.password : (await this.createEncryptionPassword(loginData.password, user.salt)).password;
-			let now: Date = new Date();
-			if (password == user.password) {
-				// 최초 로그인이면 토큰 만료 시간을 무시함 ( 기본 만료 시간 10분 )
-				if (!isEncryptionPassword || now.getTime() - new Date(loginData.lastLoginTime).getTime() <= (process.env.TOKEN_EXPIRATION || 600000)) {
+			// 최초 로그인이면 토큰 만료 시간을 무시함 ( 기본 만료 시간 10분 )
+			if (!isEncryptionPassword || now.getTime() - new Date(loginData.lastLoginTime).getTime() <= TOKEN_EXPIRATION) {
+				if (user.loginType == "local") {
+					// 평문 비밀번호는 암호화된 비밀번호로 변환
+					let password: string = isEncryptionPassword ? loginData.password : (await this.createEncryptionPassword(loginData.password, user.salt)).password;
+					if (password == user.password || isPasswordSkip) {
+						user.lastLoginTime = now;
+						return await user.save();
+					} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "비밀번호가 일치하지 않음");
+				} else {
 					user.lastLoginTime = now;
-					return await user.save();
-				} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "만료된 토큰");
-			} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "비밀번호가 일치하지 않음");
+					return await await user.save();
+				}
+			} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "만료된 토큰");
 		}
 	} catch (err) {
 		throw err;
 	}
 };
 
-UserSchema.statics.findByEmail = async function (this: IUserModel, email: string): Promise<IUserSchema | null> {
+UserSchema.statics.findByUserID = async function (this: IUserModel, userID: string): Promise<IUserSchema | null> {
 	try {
-		return await this.findOne({ email });
+		return await this.findOne({ userID });
 	} catch (err) {
 		throw err;
 	}
@@ -198,9 +221,9 @@ UserSchema.statics.findByEmail = async function (this: IUserModel, email: string
 
 UserSchema.statics.createTestUser = async function (this: IUserModel) {
 	try {
-		let user: IUserSchema | null = await this.findByEmail(TESTUSER_NAME);
+		let user: IUserSchema | null = await this.findByUserID(TESTUSER_NAME);
 		if (!user) {
-			return await this.createUser({ email: TESTUSER_NAME, password: TESTUSER_NAME, username: TESTUSER_NAME });
+			return await this.createUser({ email: TESTUSER_NAME, password: TESTUSER_NAME, userID: TESTUSER_NAME });
 		} else {
 			return user;
 		}

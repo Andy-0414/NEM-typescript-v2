@@ -16,8 +16,13 @@ DB_NAME=STRING
 DB_URL=STRING
 
 SECRET_KEY=STRING
-PORT=NUMBER // default 3000
 TOKEN_EXPIRATION=NUMBER(ms)
+
+SESSION=TRUE|FALSE(default:FALSE)
+SESSION_REDIS=TRUE|FALSE(default:FALSE)
+SESSION_EXPIRATION=NUMBER(ms)
+
+PORT=NUMBER // default 3000
 ```
 
 실행
@@ -52,13 +57,14 @@ socket 폴더 안에 ***.socket.ts 파일을 자동으로 인식하여 소켓에
 -   입력값 유효성 검사
 -   이메인 인증 추가하기 // node mailer
 -   영어 docs 만들어야함
+-   다른 oAuth 추가해야함 (Naver, Google, Facebook, ...)
 
 # Router
 
 | Name             | URL                                  | Method | Require Token | Request                                        | Response                             |
 | ---------------- | ------------------------------------ | ------ | ------------- | ---------------------------------------------- | ------------------------------------ |
-| 회원가입         | /auth/users                          | POST   | X             | {email:String,password:String,username:String} | {result: true}                       |
-| 로그인           | /auth/users/login                    | POST   | X             | {email:String,password:String}                 | {result: true,data:"TOKEN"}          |
+| 회원가입         | /auth/users                          | POST   | X             | {userID:String,password:String,username:String} | {result: true}                       |
+| 로그인           | /auth/users/login                    | POST   | X             | {userID:String,password:String}                 | {result: true,data:"TOKEN"}          |
 | 내정보           | /auth/users/my                       | POST   | O             | X                                              | {result:true,data:"USER_DATA"}       |
 | 내정보변경       | /auth/users/:id                      | PUT    | O             | {username:String}                              | {result:true}                        |
 | 비밀번호변경     | /auth/users/:id/reset-password       | POST   | O             | {password:String}                              | {result:true}                        |
