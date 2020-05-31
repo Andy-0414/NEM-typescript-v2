@@ -13,7 +13,7 @@ import { StatusError, HTTPRequestCode } from "./Send-Rule";
 import User, { IUserToken, IUserSchema } from "../schema/User";
 import Log from "./Log";
 
-import auth from "../../config/auth";
+import auth from "../../auth";
 
 /**
  * @description 패스포트를 사용한 로그인 관리 클래스

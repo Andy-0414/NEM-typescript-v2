@@ -1,7 +1,7 @@
 export default {
 	github: {
-		clientID: "GITGUB",
-		clientSecret: "GITHUB",
+		clientID: "",
+		clientSecret: "",
 		callbackURL: "/auth/users/login/github/callback",
 	},
 };
