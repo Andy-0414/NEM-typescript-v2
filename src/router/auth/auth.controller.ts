@@ -30,15 +30,17 @@ class AuthController extends Controller {
 		}
 	}
 	/**
-	 * @description 토큰 재발급, 세션이 켜져있을 시 정보 반환
+	 * @description 토큰 재발급, 세션 사용중일 시 메인 페이지로 리다이렉트
 	 * @param {Request}req Express req
 	 * @param {Response}res Express res
 	 * @param {NextFunction}next Express next
 	 */
-	public async getToken(req: Request, res: Response, next: NextFunction) {
+	public async getTokenOrRedirect(req: Request, res: Response, next: NextFunction) {
 		try {
 			let user = req.user as IUserSchema;
-			if (PassportManager.SESSION) return super.response(res, HTTPRequestCode.OK, user.toJSON(), "계정 정보 가져오기 성공");
+			// 로그인 성공 리다이렉션을 막을 지 여부 (토큰 로그인 사용 시)
+			let isRedirectBlock: boolean = req.body.isRedirect || false;
+			if (PassportManager.SESSION || !isRedirectBlock) return res.redirect(PassportManager.LoginRedirect);
 			else return super.response(res, HTTPRequestCode.OK, user.getUserToken(), "토큰 갱신 성공");
 		} catch (err) {
 			return next(err);

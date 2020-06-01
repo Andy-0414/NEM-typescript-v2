@@ -191,20 +191,21 @@ UserSchema.statics.loginAuthentication = async function (this: IUserModel, login
 		if (!user) {
 			throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "존재하지 않는 계정");
 		} else {
-			// 최초 로그인이면 토큰 만료 시간을 무시함 ( 기본 만료 시간 10분 )
-			if (!isEncryptionPassword || now.getTime() - new Date(loginData.lastLoginTime).getTime() <= TOKEN_EXPIRATION) {
-				if (user.loginType == "local") {
+			if (user.loginType == "local") {
+				// 최초 로그인이면 토큰 만료 시간을 무시함 ( 기본 만료 시간 10분 )
+				if (!isEncryptionPassword || now.getTime() - new Date(loginData.lastLoginTime).getTime() <= TOKEN_EXPIRATION) {
 					// 평문 비밀번호는 암호화된 비밀번호로 변환
 					let password: string = isEncryptionPassword ? loginData.password : (await this.createEncryptionPassword(loginData.password, user.salt)).password;
 					if (password == user.password || isPasswordSkip) {
 						user.lastLoginTime = now;
 						return await user.save();
 					} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "비밀번호가 일치하지 않음");
-				} else {
-					user.lastLoginTime = now;
-					return await await user.save();
-				}
-			} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "만료된 토큰");
+				} else throw new StatusError(HTTPRequestCode.UNAUTHORIZED, "만료된 토큰");
+			} else {
+				// 다른 방법을 사용한 로그인은 만료 시간을 체크하지 않음. (별도의 쿠키 만료 시간으로 처리)
+				user.lastLoginTime = now;
+				return await await user.save();
+			}
 		}
 	} catch (err) {
 		throw err;

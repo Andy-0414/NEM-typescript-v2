@@ -5,6 +5,8 @@ import Passport from "passport";
 import PassportJWT from "passport-jwt";
 import PassportLocal from "passport-local";
 import PassportGithub from "passport-github";
+import PassportNaver from "passport-naver";
+import PassportGoogle from "passport-google-oauth20";
 
 import RedisStore from "connect-redis";
 import Redis from "redis";
@@ -15,6 +17,16 @@ import Log from "./Log";
 
 import auth from "../../config/auth";
 
+export enum LOGIN_TYPE {
+	JWT = "jwt",
+	LOCAL = "local",
+	NAVER = "naver",
+	GITHUB = "github",
+	DISCORD = "discord",
+	GOOGLE = "google",
+	FACEBOOK = "facebook",
+	TWITTER = "twitter",
+}
 /**
  * @description 패스포트를 사용한 로그인 관리 클래스
  */
@@ -23,57 +35,42 @@ class PassportManager {
 	public readonly SESSION_REDIS: boolean = (process.env.SESSION_REDIS || "FALSE") == "TRUE";
 	public readonly SECRET_KEY: string = process.env.SECRET_KEY || "SECRET";
 	public readonly SESSION_EXPIRATION: number = Number(process.env.SESSION_EXPIRATION) || 1000 * 60 * 60 * 4;
+    public readonly LoginAbleOAuth: LOGIN_TYPE[] = [];
+    public readonly LoginRedirect = auth.loginRedirect
 
 	private readonly jwtOption: PassportJWT.StrategyOptions = {
 		jwtFromRequest: PassportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(),
 		secretOrKey: this.SECRET_KEY,
 	};
+	private readonly OAuthCertification = auth;
 
 	constructor() {
-		// JWT 토큰 로그인
-		Passport.use(
-			new PassportJWT.Strategy(this.jwtOption, async (data: IUserToken, done) => {
-				try {
-					let user = await User.loginAuthentication(data, true);
-					if (user) return done(null, user);
-					else new StatusError(HTTPRequestCode.UNAUTHORIZED, "인증 실패");
-				} catch (err) {
-					return done(err);
-				}
-			})
-		);
-		// Local 로그인
-		Passport.use(
-			"local",
-			new PassportLocal.Strategy({ usernameField: "userID", passwordField: "password", session: true, passReqToCallback: true }, async (req, userID: string, password: string, done) => {
-				try {
-					let user = await User.loginAuthentication({ userID, password });
-					if (user) return done(null, user);
-					else new StatusError(HTTPRequestCode.UNAUTHORIZED, "인증 실패");
-				} catch (err) {
-					return done(err);
-				}
-			})
-		);
 		// Github Auth가 있을 시
-		if (auth.github.clientID)
+		if (this.OAuthCertification.github.clientID) {
+			this.LoginAbleOAuth.push(LOGIN_TYPE.GITHUB);
 			Passport.use(
-				"github",
+				LOGIN_TYPE.GITHUB,
 				new PassportGithub.Strategy(
 					{
-						clientID: auth.github.clientID,
-						clientSecret: auth.github.clientSecret,
-						callbackURL: auth.github.callbackURL,
+						clientID: this.OAuthCertification.github.clientID,
+						clientSecret: this.OAuthCertification.github.clientSecret,
+						callbackURL: this.OAuthCertification.github.callbackURL,
 					},
 					async (accessToken, refreshToken, profile, done) => {
 						try {
-							let userID = this.createUserID("github", profile.id);
+							let userID = this.createUserID(LOGIN_TYPE.GITHUB, profile.id);
 							let user: IUserSchema = await User.findByUserID(userID);
 							if (user) {
 								user.imgPath = profile.photos[0].value;
 								return done(null, await user.save());
 							} else {
-								user = await User.createUser({ loginType: "github", imgPath: profile.photos[0].value, userID, password: "", username: profile.username });
+								user = await User.createUser({
+									loginType: LOGIN_TYPE.GITHUB,
+									imgPath: profile.photos[0].value,
+									userID,
+									password: "",
+									username: profile.username,
+								});
 								return done(null, user);
 							}
 						} catch (err) {
@@ -82,9 +79,97 @@ class PassportManager {
 					}
 				)
 			);
+		}
+
+		if (this.OAuthCertification.naver.clientID) {
+			this.LoginAbleOAuth.push(LOGIN_TYPE.NAVER);
+			Passport.use(
+				LOGIN_TYPE.NAVER,
+				new PassportNaver.Strategy(
+					{
+						clientID: this.OAuthCertification.naver.clientID,
+						clientSecret: this.OAuthCertification.naver.clientSecret,
+						callbackURL: this.OAuthCertification.naver.callbackURL,
+					},
+					async (accessToken, refreshToken, profile, done) => {
+						try {
+							let userID = this.createUserID(LOGIN_TYPE.NAVER, profile.id);
+							let user: IUserSchema = await User.findByUserID(userID);
+							if (user) {
+								user.imgPath = profile._json.profile_image || "";
+								return done(null, await user.save());
+							} else {
+								user = await User.createUser({
+									loginType: LOGIN_TYPE.NAVER,
+									imgPath: profile._json.profile_image || "",
+									userID,
+									password: "",
+									username: profile.displayName,
+									email: profile.emails[0].value || "",
+								});
+								return done(null, user);
+							}
+						} catch (err) {
+							return done(err);
+						}
+					}
+				)
+			);
+		}
+
+		if (this.OAuthCertification.google.clientID) {
+			this.LoginAbleOAuth.push(LOGIN_TYPE.GOOGLE);
+			Passport.use(
+				LOGIN_TYPE.GOOGLE,
+				new PassportGoogle.Strategy(
+					{
+						clientID: this.OAuthCertification.google.clientID,
+						clientSecret: this.OAuthCertification.google.clientSecret,
+						callbackURL: this.OAuthCertification.google.callbackURL,
+						scope: ["profile"],
+					},
+					async (accessToken, refreshToken, profile, done) => {
+						try {
+							let userID = this.createUserID(LOGIN_TYPE.GOOGLE, profile.id);
+							let user: IUserSchema = await User.findByUserID(userID);
+							if (user) {
+								user.imgPath = profile.photos[0].value || "";
+								return done(null, await user.save());
+							} else {
+								user = await User.createUser({
+									loginType: LOGIN_TYPE.GOOGLE,
+									imgPath: profile.photos[0].value || "",
+									userID,
+									password: "",
+									username: profile.displayName,
+								});
+								return done(null, user);
+							}
+						} catch (err) {
+							return done(err);
+						}
+					}
+				)
+			);
+		}
 
 		// 세션 사용 설정 시
 		if (this.SESSION) {
+			this.LoginAbleOAuth.push(LOGIN_TYPE.LOCAL);
+			// Local 로그인
+			Passport.use(
+				LOGIN_TYPE.LOCAL,
+				new PassportLocal.Strategy({ usernameField: "userID", passwordField: "password", session: true, passReqToCallback: true }, async (req, userID: string, password: string, done) => {
+					try {
+						let user = await User.loginAuthentication({ userID, password });
+						if (user) return done(null, user);
+						else new StatusError(HTTPRequestCode.UNAUTHORIZED, "인증 실패");
+					} catch (err) {
+						return done(err);
+					}
+				})
+			);
+
 			Passport.serializeUser((user: IUserSchema, done) => {
 				done(null, user);
 			});
@@ -97,6 +182,21 @@ class PassportManager {
 					done(err);
 				}
 			});
+		} else {
+			this.LoginAbleOAuth.push(LOGIN_TYPE.JWT);
+			// JWT 토큰 로그인
+			Passport.use(
+				LOGIN_TYPE.JWT,
+				new PassportJWT.Strategy(this.jwtOption, async (data: IUserToken, done) => {
+					try {
+						let user = await User.loginAuthentication(data, true);
+						if (user) return done(null, user);
+						else new StatusError(HTTPRequestCode.UNAUTHORIZED, "인증 실패");
+					} catch (err) {
+						return done(err);
+					}
+				})
+			);
 		}
 	}
 
@@ -104,7 +204,7 @@ class PassportManager {
 	 * @description 외부 계정의 아이디를 생성합니다.
 	 * @returns {Handler} id
 	 */
-	public createUserID(type: string, id: string): string {
+	public createUserID(type: LOGIN_TYPE, id: string): string {
 		return `${type}-${id}`;
 	}
 
@@ -161,7 +261,7 @@ class PassportManager {
 	 * @param {String}type 로그인 방식
 	 * @returns {Handler} 미들웨어
 	 */
-	public authenticate(type?: string): Handler {
+	public authenticate(type?: LOGIN_TYPE): Handler {
 		if (type) return Passport.authenticate(type, { session: this.SESSION });
 		else if (this.SESSION)
 			return (req, res, next) => {
@@ -174,9 +274,22 @@ class PassportManager {
 				session: false,
 			});
 	}
+	//
+	/**
+	 * @description 세션 로그인 시 토큰 로그인 대신 세션을 사용하는 Local 형식으로 변경합니다.
+	 * @description 세션 사용 시 로그인 미들웨어를 반환합니다.
+	 * @returns {Handler} 미들웨어
+	 */
 	public getLoginMiddleware(): Handler {
 		if (this.SESSION) return Passport.authenticate("local");
 		else return (req, res, next) => next();
+	}
+	/**
+	 * @description
+	 */
+	public getCallbackURLByLoginType(type: LOGIN_TYPE): string {
+		let url: string = this.OAuthCertification[type].callbackURL;
+		return url.replace("/auth", "");
 	}
 }
 
