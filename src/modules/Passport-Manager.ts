@@ -254,6 +254,11 @@ class PassportManager {
 			// passport 세팅
 			app.use(Passport.initialize());
 		}
+		// 로그인 가능한 OAuth 출력
+		Log.i(this.SESSION ? "[SESSION MODE]" : "[TOKEN MODE]");
+		this.LoginAbleOAuth.forEach((loginType) => {
+			Log.c(`${loginType.toUpperCase()} Auth is ready`);
+		});
 	}
 	/**
 	 * @description Authorization 헤더 안의 Bearer 토큰를 이용하여(기본값) 로그인 후 계정에 대한 정보를 req.user 에 저장합니다.

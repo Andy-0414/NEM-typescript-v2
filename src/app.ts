@@ -21,6 +21,9 @@ const NODE_ENV = process.env.NODE_ENV;
 if (NODE_ENV == "TEST") Log.disableConsole();
 else app.use(morgan("dev")); // 서비스 시 로그 출력
 
+// .env 체크
+ProjectInitializeManager.checkEnv();
+
 app.use(
 	cors({
 		origin: NODE_ENV === "development" ? "*" : process.env.REQUEST_URI || "*",
@@ -36,17 +39,17 @@ app.use(express.json({ limit: "20mb" })); // json 지원
 const server = app.listen(port, () => {
 	// 서버가 열렸을 시 콜백
 	Log.i(`port : ${port}`);
-	if (!process.env.PORT) Log.w("Port is not set. The default port 3000.");
 });
 
+// passport 로그인 연결
 PassportManager.setApplication(app);
-ProjectInitializeManager.checkEnv();
 
 DB.init(); // DB 연결
 
 app.use(Router); // 라우터 연결
 app.use(SendRule.autoErrorHandler()); // 에러 핸들링
 
+// 소켓 시작
 Socket.start(server);
 
 export default app;
