@@ -16,7 +16,9 @@ import User, { IUserToken, IUserSchema } from "../schema/User";
 import Log from "./Log";
 
 import auth from "../../config/auth";
-
+/**
+ * @description 로그인 타입
+ */
 export enum LOGIN_TYPE {
 	JWT = "jwt",
 	LOCAL = "local",
@@ -31,21 +33,17 @@ export enum LOGIN_TYPE {
  * @description 패스포트를 사용한 로그인 관리 클래스
  */
 class PassportManager {
-	public readonly SESSION: boolean = (process.env.SESSION || "FALSE") == "TRUE";
-	public readonly SESSION_REDIS: boolean = (process.env.SESSION_REDIS || "FALSE") == "TRUE";
-	public readonly SECRET_KEY: string = process.env.SECRET_KEY || "SECRET";
-	public readonly SESSION_EXPIRATION: number = Number(process.env.SESSION_EXPIRATION) || 1000 * 60 * 60 * 4;
-    public readonly LoginAbleOAuth: LOGIN_TYPE[] = [];
-    public readonly LoginRedirect = auth.loginRedirect
+	public readonly SESSION: boolean = (process.env.SESSION || "FALSE") == "TRUE"; // 세션 사용 여부
+	public readonly SESSION_REDIS: boolean = (process.env.SESSION_REDIS || "FALSE") == "TRUE"; // 세션 레디스DB 사용 여부
+	public readonly SECRET_KEY: string = process.env.SECRET_KEY || "SECRET"; // 암호화 키
+	public readonly SESSION_EXPIRATION: number = Number(process.env.SESSION_EXPIRATION) || 1000 * 60 * 60 * 4; // 세션 만료 시간
+	public readonly LoginAbleOAuth: LOGIN_TYPE[] = []; // 로그인 가능한 로그인 타입 나열
+	public readonly LoginRedirect = auth.loginRedirect; // 로그인 후 리다이렉트 시킬 경로 (/config/auth.ts에서 변경 가능)
 
-	private readonly jwtOption: PassportJWT.StrategyOptions = {
-		jwtFromRequest: PassportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(),
-		secretOrKey: this.SECRET_KEY,
-	};
-	private readonly OAuthCertification = auth;
+	private readonly OAuthCertification = auth; // 각종 로그인 플랫폼에 대한 인증키 (/config/auth.ts에서 변경 가능)
 
 	constructor() {
-		// Github Auth가 있을 시
+		// Github 로그인
 		if (this.OAuthCertification.github.clientID) {
 			this.LoginAbleOAuth.push(LOGIN_TYPE.GITHUB);
 			Passport.use(
@@ -80,7 +78,7 @@ class PassportManager {
 				)
 			);
 		}
-
+		// Naver 로그인
 		if (this.OAuthCertification.naver.clientID) {
 			this.LoginAbleOAuth.push(LOGIN_TYPE.NAVER);
 			Passport.use(
@@ -116,7 +114,7 @@ class PassportManager {
 				)
 			);
 		}
-
+		// Google 로그인
 		if (this.OAuthCertification.google.clientID) {
 			this.LoginAbleOAuth.push(LOGIN_TYPE.GOOGLE);
 			Passport.use(
@@ -155,8 +153,8 @@ class PassportManager {
 
 		// 세션 사용 설정 시
 		if (this.SESSION) {
-			this.LoginAbleOAuth.push(LOGIN_TYPE.LOCAL);
 			// Local 로그인
+			this.LoginAbleOAuth.push(LOGIN_TYPE.LOCAL);
 			Passport.use(
 				LOGIN_TYPE.LOCAL,
 				new PassportLocal.Strategy({ usernameField: "userID", passwordField: "password", session: true, passReqToCallback: true }, async (req, userID: string, password: string, done) => {
@@ -169,10 +167,11 @@ class PassportManager {
 					}
 				})
 			);
-
+			// 최초 로그인 성공 시 세션을 저장하는 곳
 			Passport.serializeUser((user: IUserSchema, done) => {
 				done(null, user);
 			});
+			// 이후 로그인 성공 시도 시 세션을 갱신하는 곳
 			Passport.deserializeUser(async (user: IUserSchema, done) => {
 				try {
 					let nUser = await User.loginAuthentication(user, true, true);
@@ -183,11 +182,11 @@ class PassportManager {
 				}
 			});
 		} else {
-			this.LoginAbleOAuth.push(LOGIN_TYPE.JWT);
 			// JWT 토큰 로그인
+			this.LoginAbleOAuth.push(LOGIN_TYPE.JWT);
 			Passport.use(
 				LOGIN_TYPE.JWT,
-				new PassportJWT.Strategy(this.jwtOption, async (data: IUserToken, done) => {
+				new PassportJWT.Strategy({ jwtFromRequest: PassportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(), secretOrKey: this.SECRET_KEY }, async (data: IUserToken, done) => {
 					try {
 						let user = await User.loginAuthentication(data, true);
 						if (user) return done(null, user);
@@ -214,7 +213,6 @@ class PassportManager {
 	 */
 	public setApplication(app: Application): void {
 		if (this.SESSION) {
-			// app.use(Passport.authenticate("local", { failWithError: true }));
 			// Redis 사용
 			let store = null;
 			// Redis 사용 설정을 했을 시
@@ -237,7 +235,7 @@ class PassportManager {
 				// Redis 사용 안할 시
 				Log.c("Local Session connected");
 			}
-
+			// express-session 사용
 			app.use(
 				ExpressSession({
 					secret: this.SECRET_KEY,
@@ -248,10 +246,12 @@ class PassportManager {
 					saveUninitialized: true,
 				})
 			);
-			// passport 세션 사용
+			// passport 세팅
 			app.use(Passport.initialize());
+			// passport 세션 사용
 			app.use(Passport.session());
 		} else {
+			// passport 세팅
 			app.use(Passport.initialize());
 		}
 	}
@@ -262,12 +262,15 @@ class PassportManager {
 	 * @returns {Handler} 미들웨어
 	 */
 	public authenticate(type?: LOGIN_TYPE): Handler {
+		// 특정 타입을 입력받았을 시 해당 타입에 대한 로그인 미들웨어 반환
 		if (type) return Passport.authenticate(type, { session: this.SESSION });
+		// 세션 사용 시 로그인 여부를 체크하는 미들웨어 반환 (세션을 통한 자동 로그인)
 		else if (this.SESSION)
 			return (req, res, next) => {
 				if (req.isAuthenticated()) next();
 				else next(new StatusError(HTTPRequestCode.UNAUTHORIZED, "인증 실패"));
 			};
+		// 세션을 사용하지 않을 시 토큰을 사용하여 로그인하는 미들웨어 반환
 		else
 			return Passport.authenticate("jwt", {
 				failWithError: true,
@@ -281,11 +284,14 @@ class PassportManager {
 	 * @returns {Handler} 미들웨어
 	 */
 	public getLoginMiddleware(): Handler {
+		// 세션 사용 시 로그인 후 세션에 저장하는 미들웨어를 반환
 		if (this.SESSION) return Passport.authenticate("local");
+		// 세션을 사용하지 않을 시 미들웨어를 반환하지 않고 token을 가져오도록 유도함
 		else return (req, res, next) => next();
 	}
 	/**
-	 * @description
+	 * @description 로그인 시도 후 리다이렉션 되는 링크를 반환함.
+	 * @returns {String} 리다이렉션 링크
 	 */
 	public getCallbackURLByLoginType(type: LOGIN_TYPE): string {
 		let url: string = this.OAuthCertification[type].callbackURL;

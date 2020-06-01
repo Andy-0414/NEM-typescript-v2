@@ -8,11 +8,11 @@ class DB {
 	private isDatabaseConnect: boolean = false;
 	private db: mongoose.Connection;
 
-	public readonly env: string = process.env.NODE_ENV || "development";
-	public readonly dbName: string = process.env.DB_NAME || `NEM-TEMPLATE-V2_${this.env}`;
-	public readonly dbUrl: string = process.env.DB_URL || "mongodb://localhost/NEM-TEMPLATE-V2";
-	public readonly dbUser: string = process.env.DB_USER || "";
-	public readonly dbPass: string = process.env.DB_PASS || "";
+	public readonly env: string = process.env.NODE_ENV || "development"; // 개발 환경
+	public readonly dbName: string = process.env.DB_NAME || `NEM-TEMPLATE-V2_${this.env}`; // DB 이름
+	public readonly dbUrl: string = process.env.DB_URL || "mongodb://localhost/NEM-TEMPLATE-V2"; // DB URL
+	public readonly dbUser: string = process.env.DB_USER || ""; // DB username
+	public readonly dbPass: string = process.env.DB_PASS || ""; // DB password
 	/**
 	 * @description MongoDB 활성화
 	 * @param {string}url MongoDB URL

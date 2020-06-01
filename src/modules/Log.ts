@@ -26,6 +26,10 @@ class Log {
 	public getTime(): string {
 		return moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
 	}
+	/**
+	 * @description 콘솔 출력 기본값
+	 * @returns {boolean} 성공 여부
+	 */
 	private _defaultLogFormat(str: string): boolean {
 		if (this.isConsoleOutput) {
 			console.log(chalk.grey(`[${this.getTime()}] `) + str);

@@ -5,7 +5,6 @@ import Controller from "../controller";
 import ResourceManager from "../../modules/Resource-Manager";
 import Base64ToImage from "../../modules/Base64-To-Image";
 import PassportManager from "../../modules/Passport-Manager";
-import Passport from "passport";
 
 class AuthController extends Controller {
 	/**
