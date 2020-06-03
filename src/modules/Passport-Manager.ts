@@ -2,11 +2,12 @@ import { Handler, Application } from "express";
 import ExpressSession from "express-session";
 
 import Passport from "passport";
-import PassportJWT from "passport-jwt";
-import PassportLocal from "passport-local";
-import PassportGithub from "passport-github";
-import PassportNaver from "passport-naver";
-import PassportGoogle from "passport-google-oauth20";
+import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
+import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as GithubStrategy } from "passport-github";
+import { Strategy as NaverStrategy } from "passport-naver";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as KakaoStrategy } from "passport-kakao";
 
 import RedisStore from "connect-redis";
 import Redis from "redis";
@@ -20,14 +21,15 @@ import auth from "../../config/auth";
  * @description 로그인 타입
  */
 export enum LOGIN_TYPE {
-	JWT = "jwt",
-	LOCAL = "local",
-	NAVER = "naver",
-	GITHUB = "github",
+	JWT = "jwt", // o
+	LOCAL = "local", // o
+	NAVER = "naver", // o
+	GITHUB = "github", // o
 	DISCORD = "discord",
-	GOOGLE = "google",
+	GOOGLE = "google", // o
 	FACEBOOK = "facebook",
 	TWITTER = "twitter",
+	KAKAO = "kakao", // o
 }
 /**
  * @description 패스포트를 사용한 로그인 관리 클래스
@@ -48,7 +50,7 @@ class PassportManager {
 			this.LoginAbleOAuth.push(LOGIN_TYPE.GITHUB);
 			Passport.use(
 				LOGIN_TYPE.GITHUB,
-				new PassportGithub.Strategy(
+				new GithubStrategy(
 					{
 						clientID: this.OAuthCertification.github.clientID,
 						clientSecret: this.OAuthCertification.github.clientSecret,
@@ -83,7 +85,7 @@ class PassportManager {
 			this.LoginAbleOAuth.push(LOGIN_TYPE.NAVER);
 			Passport.use(
 				LOGIN_TYPE.NAVER,
-				new PassportNaver.Strategy(
+				new NaverStrategy(
 					{
 						clientID: this.OAuthCertification.naver.clientID,
 						clientSecret: this.OAuthCertification.naver.clientSecret,
@@ -119,7 +121,7 @@ class PassportManager {
 			this.LoginAbleOAuth.push(LOGIN_TYPE.GOOGLE);
 			Passport.use(
 				LOGIN_TYPE.GOOGLE,
-				new PassportGoogle.Strategy(
+				new GoogleStrategy(
 					{
 						clientID: this.OAuthCertification.google.clientID,
 						clientSecret: this.OAuthCertification.google.clientSecret,
@@ -150,6 +152,42 @@ class PassportManager {
 				)
 			);
 		}
+		// Kakao 로그인
+		if (this.OAuthCertification.kakao.clientID) {
+			this.LoginAbleOAuth.push(LOGIN_TYPE.KAKAO);
+			Passport.use(
+				LOGIN_TYPE.KAKAO,
+				new KakaoStrategy(
+					{
+						clientID: this.OAuthCertification.kakao.clientID,
+						clientSecret: this.OAuthCertification.kakao.clientSecret,
+						callbackURL: this.OAuthCertification.kakao.callbackURL,
+					},
+					async (accessToken, refreshToken, profile, done) => {
+						try {
+							let userID = this.createUserID(LOGIN_TYPE.KAKAO, profile.id);
+							let user: IUserSchema = await User.findByUserID(userID);
+							if (user) {
+								user.imgPath = profile._json.properties.profile_image || "";
+								return done(null, await user.save());
+							} else {
+								user = await User.createUser({
+									loginType: LOGIN_TYPE.KAKAO,
+									imgPath: profile._json.properties.profile_image || "",
+									userID,
+									email: profile._json.kakao_account ? profile._json.kakao_account.email : "",
+									password: "",
+									username: profile.displayName,
+								});
+								return done(null, user);
+							}
+						} catch (err) {
+							return done(err);
+						}
+					}
+				)
+			);
+		}
 
 		// 세션 사용 설정 시
 		if (this.SESSION) {
@@ -157,7 +195,7 @@ class PassportManager {
 			this.LoginAbleOAuth.push(LOGIN_TYPE.LOCAL);
 			Passport.use(
 				LOGIN_TYPE.LOCAL,
-				new PassportLocal.Strategy({ usernameField: "userID", passwordField: "password", session: true, passReqToCallback: true }, async (req, userID: string, password: string, done) => {
+				new LocalStrategy({ usernameField: "userID", passwordField: "password", session: true, passReqToCallback: true }, async (req, userID: string, password: string, done) => {
 					try {
 						let user = await User.loginAuthentication({ userID, password });
 						if (user) return done(null, user);
@@ -186,7 +224,7 @@ class PassportManager {
 			this.LoginAbleOAuth.push(LOGIN_TYPE.JWT);
 			Passport.use(
 				LOGIN_TYPE.JWT,
-				new PassportJWT.Strategy({ jwtFromRequest: PassportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(), secretOrKey: this.SECRET_KEY }, async (data: IUserToken, done) => {
+				new JWTStrategy({ jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), secretOrKey: this.SECRET_KEY }, async (data: IUserToken, done) => {
 					try {
 						let user = await User.loginAuthentication(data, true);
 						if (user) return done(null, user);

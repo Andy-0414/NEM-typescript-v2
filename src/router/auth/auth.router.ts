@@ -12,6 +12,8 @@ router.get("/users/login/naver", PassportManager.authenticate(LOGIN_TYPE.NAVER))
 router.get(PassportManager.getCallbackURLByLoginType(LOGIN_TYPE.NAVER), PassportManager.authenticate(LOGIN_TYPE.NAVER), authController.getTokenOrRedirect);
 router.get("/users/login/google", PassportManager.authenticate(LOGIN_TYPE.GOOGLE));
 router.get(PassportManager.getCallbackURLByLoginType(LOGIN_TYPE.GOOGLE), PassportManager.authenticate(LOGIN_TYPE.GOOGLE), authController.getTokenOrRedirect);
+router.get("/users/login/kakao", PassportManager.authenticate(LOGIN_TYPE.KAKAO));
+router.get(PassportManager.getCallbackURLByLoginType(LOGIN_TYPE.KAKAO), PassportManager.authenticate(LOGIN_TYPE.KAKAO), authController.getTokenOrRedirect);
 
 router.post("/users/token", PassportManager.authenticate(), authController.getTokenOrRedirect);
 router.post("/users/my", PassportManager.authenticate(), authController.my);

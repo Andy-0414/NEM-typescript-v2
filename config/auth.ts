@@ -15,4 +15,9 @@ export default {
 		clientSecret: "",
 		callbackURL: "/auth/users/login/google/callback",
 	},
+	kakao: {
+		clientID: "",
+		clientSecret: "",
+		callbackURL: "/auth/users/login/kakao/callback",
+	},
 };
