@@ -10,7 +10,6 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as KakaoStrategy } from "passport-kakao";
 
 import RedisStore from "connect-redis";
-import Redis from "redis";
 import MongoStore from "connect-mongo";
 
 import { StatusError, HTTPRequestCode } from "./Send-Rule";
@@ -260,6 +259,7 @@ class PassportManager {
 			// Redis 사용 설정을 했을 시
 			if (this.SESSION_REDIS) {
 				store = new (RedisStore(ExpressSession))({ client: RedisHelper.getDB() });
+				Log.c("Reids Session connected");
 			} else {
 				// Redis 사용 안할 시 MongoDB 사용
 				store = new (MongoStore(ExpressSession))({ mongooseConnection: MongoDBHelper.getDB() });

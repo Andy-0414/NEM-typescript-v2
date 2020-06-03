@@ -38,8 +38,8 @@ class AuthController extends Controller {
 		try {
 			let user = req.user as IUserSchema;
 			// 로그인 성공 리다이렉션을 막을 지 여부 (토큰 로그인 사용 시)
-			let isRedirectBlock: boolean = req.body.isRedirect || false;
-			if (PassportManager.SESSION && !isRedirectBlock) return res.redirect(PassportManager.LoginRedirect);
+			let isRedirect: boolean = req.body.isRedirect || true;
+			if (PassportManager.SESSION || isRedirect) return res.redirect(PassportManager.LoginRedirect);
 			else return super.response(res, HTTPRequestCode.OK, user.getUserToken(), "토큰 갱신 성공");
 		} catch (err) {
 			return next(err);
