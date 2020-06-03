@@ -1,12 +1,12 @@
-import mongoose from "mongoose";
+import Mongoose from "mongoose";
 import Log from "./Log";
 import User from "../schema/User";
+import DBHelper from "./schema/DBHelper";
 /**
  * @description Mongo DB 관리 클래스
  */
-class DB {
-	private isDatabaseConnect: boolean = false;
-	private db: mongoose.Connection;
+class MongoDBHelper extends DBHelper<Mongoose.Connection> {
+	private db: Mongoose.Connection;
 
 	public readonly env: string = process.env.NODE_ENV || "development"; // 개발 환경
 	public readonly dbName: string = process.env.DB_NAME || `NEM-TEMPLATE-V2_${this.env}`; // DB 이름
@@ -18,11 +18,13 @@ class DB {
 	 * @param {string}url MongoDB URL
 	 */
 	public init(url?: string): void {
-		this.db = mongoose.connection;
+		this.db = Mongoose.connection;
 		// 접속 실패 시
 		this.db.on("error", () => {
 			Log.e("Mongo DB connected fail");
+			Log.e("Server stop");
 			this.isDatabaseConnect = false;
+			process.exit();
 		});
 		// 접속 성공 시
 		this.db.once("open", () => {
@@ -33,23 +35,16 @@ class DB {
 			});
 		});
 
-		mongoose.set("useCreateIndex", true);
-		mongoose.set("useUnifiedTopology", true);
-		mongoose.connect(url || this.dbUrl, { user: this.dbUser, pass: this.dbPass, dbName: this.dbName, useNewUrlParser: true, useUnifiedTopology: true });
-	}
-	/**
-	 * @description DB 연결 여부 확인
-	 * @returns {boolean} DB 연결 여부
-	 */
-	public isConnectedDB(): boolean {
-		return this.isDatabaseConnect;
+		Mongoose.set("useCreateIndex", true);
+		Mongoose.set("useUnifiedTopology", true);
+		Mongoose.connect(url || this.dbUrl, { user: this.dbUser, pass: this.dbPass, dbName: this.dbName, useNewUrlParser: true, useUnifiedTopology: true });
 	}
 	/**
 	 * @description DB 객체 반환
-	 * @returns {mongoose.Connection} DB 객체
+	 * @returns {Mongoose.Connection} DB 객체
 	 */
-	public getDB(): mongoose.Connection {
+	public getDB(): Mongoose.Connection {
 		return this.db;
 	}
 }
-export default new DB();
+export default new MongoDBHelper();

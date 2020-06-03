@@ -6,16 +6,20 @@ import morgan from "morgan";
 
 import "dotenv/config";
 import Log from "./modules/Log";
-import DB from "./modules/MongoDB-Helper";
 import SendRule from "./modules/Send-Rule";
 import PassportManager from "./modules/Passport-Manager";
 import Router from "./router/index";
 import Socket from "./socket/index";
 import ProjectInitializeManager from "./modules/Project-Initialize-Manager";
+import MongoDBHelper from "./modules/MongoDB-Helper";
+import RedisHelper from "./modules/Redis-Helper";
 
 const app: express.Application = express(); // 서버 객체
 const port = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV;
+
+MongoDBHelper.init(); // MongoDB 연결
+PassportManager.SESSION_REDIS && RedisHelper.init(); // Redis 연결
 
 // 테스트 코드일 시 따로 처리
 if (NODE_ENV == "TEST") Log.disableConsole();
@@ -43,8 +47,6 @@ const server = app.listen(port, () => {
 
 // passport 로그인 연결
 PassportManager.setApplication(app);
-
-DB.init(); // DB 연결
 
 app.use(Router); // 라우터 연결
 app.use(SendRule.autoErrorHandler()); // 에러 핸들링

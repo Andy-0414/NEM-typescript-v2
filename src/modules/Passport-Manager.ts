@@ -11,12 +11,15 @@ import { Strategy as KakaoStrategy } from "passport-kakao";
 
 import RedisStore from "connect-redis";
 import Redis from "redis";
+import MongoStore from "connect-mongo";
 
 import { StatusError, HTTPRequestCode } from "./Send-Rule";
 import User, { IUserToken, IUserSchema } from "../schema/User";
 import Log from "./Log";
 
 import auth from "../../config/auth";
+import MongoDBHelper from "./MongoDB-Helper";
+import RedisHelper from "./Redis-Helper";
 /**
  * @description 로그인 타입
  */
@@ -250,28 +253,17 @@ class PassportManager {
 	 * @returns {Handler} passport 기본 세팅 미들웨어
 	 */
 	public setApplication(app: Application): void {
+		let store;
+		// Redis 사용
 		if (this.SESSION) {
-			// Redis 사용
-			let store = null;
+			store = null;
 			// Redis 사용 설정을 했을 시
 			if (this.SESSION_REDIS) {
-				let client = Redis.createClient();
-				store = new (RedisStore(ExpressSession))({ client: client });
-				// Redis 성공 여부 반환
-				client.on("error", (err) => {
-					// Redis 연결 실패 시 서버 종료
-					client.quit();
-					Log.e("Redis connected fail");
-					Log.e("Server stop");
-					process.exit();
-				});
-				client.on("ready", () => {
-					// Redis 연결 성공 시
-					Log.c("Redis connected");
-				});
+				store = new (RedisStore(ExpressSession))({ client: RedisHelper.getDB() });
 			} else {
-				// Redis 사용 안할 시
-				Log.c("Local Session connected");
+				// Redis 사용 안할 시 MongoDB 사용
+				store = new (MongoStore(ExpressSession))({ mongooseConnection: MongoDBHelper.getDB() });
+				Log.c("Mongo Session connected");
 			}
 			// express-session 사용
 			app.use(
@@ -282,6 +274,7 @@ class PassportManager {
 						maxAge: this.SESSION_EXPIRATION, // 4 시간
 					},
 					saveUninitialized: true,
+					resave: true,
 				})
 			);
 			// passport 세팅
@@ -295,7 +288,7 @@ class PassportManager {
 		// 로그인 가능한 OAuth 출력
 		Log.i(this.SESSION ? "[SESSION MODE]" : "[TOKEN MODE]");
 		this.LoginAbleOAuth.forEach((loginType) => {
-			Log.c(`${loginType.toUpperCase()} Auth is ready`);
+			Log.c(`- ${loginType.toUpperCase()} Auth is ready`);
 		});
 	}
 	/**
