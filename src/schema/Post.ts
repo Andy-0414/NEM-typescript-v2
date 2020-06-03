@@ -10,7 +10,7 @@ export interface IPost {
 	lastUpdateTime: Date;
 	createTime: Date;
 }
-const PostSchema: Schema = new Schema({
+export const PostSchema: Schema = new Schema({
 	owner: { type: Schema.Types.ObjectId, required: true, ref: "User" },
 	title: { type: String, required: true },
 	content: { type: String, required: true },

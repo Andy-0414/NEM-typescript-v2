@@ -24,8 +24,9 @@ export interface IUser extends IUserToken {
 	imgPath?: string;
 	lastLoginTime?: Date;
 	createdTime?: Date;
+	isAdmin?: boolean;
 }
-const UserSchema: Schema = new Schema({
+export const UserSchema: Schema = new Schema({
 	loginType: { type: String, default: "local" },
 	username: { type: String, default: "User" },
 	email: { type: String, default: "" },
@@ -35,6 +36,7 @@ const UserSchema: Schema = new Schema({
 	imgPath: { type: String, default: "" },
 	lastLoginTime: { type: Date, default: Date.now },
 	createdTime: { type: Date, default: Date.now },
+	isAdmin: { type: Boolean, default: false },
 });
 const NonUpdatableField = ["userID", "password", "salt", "lastLoginTime", "createdTime"];
 const TESTUSER_NAME = process.env.TESTUSER_NAME || "testuser";
@@ -65,7 +67,7 @@ export interface IUserSchema extends IUser, Document {
 	 * @description 중요 정보를 숨기고 객체화 시킵니다.
 	 * @returns {Promise<IUserSchema>} 변환된 객체를 반환합니다.
 	 */
-	changeInfo(): IUser;
+	toJSON(): IUser;
 }
 
 /**

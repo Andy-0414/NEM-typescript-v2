@@ -9,7 +9,7 @@ export interface IComment {
 	lastUpdateTime: Date;
 	createTime: Date;
 }
-const CommentSchema: Schema = new Schema({
+export const CommentSchema: Schema = new Schema({
 	post: { type: Schema.Types.ObjectId, required: true, ref: "Post" },
 	owner: { type: Schema.Types.ObjectId, required: true, ref: "User" },
 	content: { type: String, required: true },

@@ -313,7 +313,6 @@ class PassportManager {
 				session: false,
 			});
 	}
-	//
 	/**
 	 * @description 세션 로그인 시 토큰 로그인 대신 세션을 사용하는 Local 형식으로 변경합니다.
 	 * @description 세션 사용 시 로그인 미들웨어를 반환합니다.
