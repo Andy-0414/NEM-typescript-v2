@@ -62,16 +62,16 @@ socket 폴더 안에 \*\*\*.socket.ts 파일을 자동으로 인식하여 소켓
 
 | Name             | URL                                  | Method | Require Token | Request                                         | Response                             |
 | ---------------- | ------------------------------------ | ------ | ------------- | ----------------------------------------------- | ------------------------------------ |
-| 회원가입         | /auth/users                          | POST   | X             | {userID:String,password:String,username:String} | {result: true}                       |
-| 로그인           | /auth/users/login                    | POST   | X             | {userID:String,password:String}                 | {result: true,data:"TOKEN"}          |
-| 내정보           | /auth/users/my                       | POST   | O             | X                                               | {result:true,data:"USER_DATA"}       |
-| 내정보변경       | /auth/users/:id                      | PUT    | O             | {username:String}                               | {result:true}                        |
-| 비밀번호변경     | /auth/users/:id/reset-password       | POST   | O             | {password:String}                               | {result:true}                        |
-| 프로필이미지변경 | /auth/users/:id/change-profile-image | POST   | O             | {img:Base64}                                    | {result:true}                        |
-| 토큰재발급       | /auth/users/token                    | POST   | O             | X                                               | {result: true,data:"TOKEN"}          |
-| 계정리스트       | /auth/users                          | GET    | X             | X                                               | {result: true,data:["USER DATA"]}    |
-| 계정조회         | /auth/users/:id                      | GET    | X             | X                                               | {result: true,data:"USER DATA"}      |
-| 계정삭제         | /auth/users/:id                      | DELETE | O             | X                                               | {result: true}                       |
+| 회원가입         | /auth/user                          | POST   | X             | {userID:String,password:String,username:String} | {result: true}                       |
+| 로그인           | /auth/user/login                    | POST   | X             | {userID:String,password:String}                 | {result: true,data:"TOKEN"}          |
+| 내정보           | /auth/user/my                       | POST   | O             | X                                               | {result:true,data:"USER_DATA"}       |
+| 내정보변경       | /auth/user/:id                      | PUT    | O             | {username:String}                               | {result:true}                        |
+| 비밀번호변경     | /auth/user/:id/reset-password       | POST   | O             | {password:String}                               | {result:true}                        |
+| 프로필이미지변경 | /auth/user/:id/change-profile-image | POST   | O             | {img:Base64}                                    | {result:true}                        |
+| 토큰재발급       | /auth/user/token                    | POST   | O             | X                                               | {result: true,data:"TOKEN"}          |
+| 계정리스트       | /auth/user                          | GET    | X             | X                                               | {result: true,data:["USER DATA"]}    |
+| 계정조회         | /auth/user/:id                      | GET    | X             | X                                               | {result: true,data:"USER DATA"}      |
+| 계정삭제         | /auth/user/:id                      | DELETE | O             | X                                               | {result: true}                       |
 | 글생성           | /post                                | POST   | O             | {title:String,content:String}                   | {result: true,data:"POST DATA"}      |
 | 글리스트         | /post                                | GET    | X             | X                                               | {result: true,data:["POST DATA"]}    |
 | 글조회           | /post/:id                            | GET    | X             | X                                               | {result: true,data:"POST DATA"}      |

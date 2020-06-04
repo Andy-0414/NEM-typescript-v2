@@ -16,7 +16,7 @@ import RedisHelper from "./modules/Redis-Helper";
 
 const app: express.Application = express(); // 서버 객체
 const port = process.env.PORT || 3000;
-const NODE_ENV = process.env.NODE_ENV;
+const NODE_ENV = ProjectInitializeManager.env;
 
 MongoDBHelper.init(); // MongoDB 연결
 PassportManager.SESSION_REDIS && RedisHelper.init(); // Redis 연결
@@ -30,7 +30,8 @@ ProjectInitializeManager.checkEnv();
 
 app.use(
 	cors({
-		origin: NODE_ENV === "development" ? "*" : process.env.REQUEST_URI || "*",
+		origin: NODE_ENV === "development" ? "*" : process.env.REQUEST_URI || "*", // FIXME: cors not work
+		credentials: true,
 	})
 ); // CORS 설정 미들웨어
 app.use(helmet()); // 보안 미들웨어

@@ -41,7 +41,6 @@ class SchemaManager {
 				schemaShape,
 			});
 		}
-		console.log(result[0]);
 		return result;
 	}
 }

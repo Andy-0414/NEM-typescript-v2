@@ -10,7 +10,7 @@ describe("/post", () => {
 
 	// 로그인
 	request(app)
-		.post("/auth/users/login")
+		.post("/auth/user/login")
 		.send({ userID: TESTUSER_NAME, password: TESTUSER_NAME })
 		.expect("Content-Type", /json/)
 		.expect(200)

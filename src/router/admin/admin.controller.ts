@@ -13,9 +13,7 @@ class AdminController extends Controller {
 	 * @param {NextFunction}next Express next
 	 */
 	public getLoginType(req: Request, res: Response, next: NextFunction) {
-		let user = req.user as IUserSchema;
-		if (user.isAdmin) super.response(res, HTTPRequestCode.OK, PassportManager.SESSION ? "SESSION" : "TOKEN", "로그인 타입 가져오기 성공");
-		else return next(new StatusError(HTTPRequestCode.FORBIDDEN, undefined, "권한 없음"));
+		super.response(res, HTTPRequestCode.OK, PassportManager.SESSION ? "SESSION" : "TOKEN", "로그인 타입 가져오기 성공");
 	}
 	/**
 	 * @description 모델 정보를 가져옵니다.
