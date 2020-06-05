@@ -4,7 +4,13 @@ import { Schema, Model } from "mongoose";
 
 export interface SchemaFrame {
 	schemaName: string;
-	schemaShape: Object;
+	schemaShape: {
+		name: string;
+		type: string;
+		required: boolean;
+		ref: string;
+		select: boolean;
+	}[];
 	schema: Model<any>;
 }
 class SchemaManager {
@@ -39,6 +45,7 @@ class SchemaManager {
 					type: (schema.paths[key] as any).instance,
 					required: schema.obj[key].required || false,
 					ref: schema.obj[key].ref || "",
+					select: schema.obj[key].select != false,
 				};
 			});
 			result.push({
@@ -51,9 +58,17 @@ class SchemaManager {
 		return result;
 	}
 	public async getSchemaDataset(schemaName: string): Promise<Schema[]> {
-		let schemaFrame = this.schemaFrameList.find((schemaFrame) => schemaFrame.schemaName == schemaName);
-		if (schemaFrame) return schemaFrame.schema.find();
-		else [];
+		let schemaFrame: SchemaFrame = this.schemaFrameList.find((schemaFrame) => schemaFrame.schemaName == schemaName);
+		if (schemaFrame) {
+			let selectFalseList = schemaFrame.schemaShape
+				.map((data) => {
+					if (!data.select) return data.name;
+					else return "";
+				})
+				.filter((str) => str != "");
+			let selectStr = selectFalseList.length > 0 ? `+${selectFalseList.join(" +")}` : "";
+			return await schemaFrame.schema.find().select(selectStr).exec(); // FIXME: toObjet 시 select:false 필드 소멸
+		} else [];
 	}
 }
 

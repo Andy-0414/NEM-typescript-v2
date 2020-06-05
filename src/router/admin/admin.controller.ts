@@ -28,7 +28,7 @@ class AdminController extends Controller {
 		} else return next(new StatusError(HTTPRequestCode.FORBIDDEN, undefined, "권한 없음"));
 	}
 	/**
-	 * @description 모델 정보를 가져옵니다.
+	 * @description 모델 데어티를 가져옵니다.
 	 * @param {Request}req Express req
 	 * @param {Response}res Express res
 	 * @param {NextFunction}next Express next
