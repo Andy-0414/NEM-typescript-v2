@@ -1,13 +1,18 @@
 import path from "path";
 import fs, { StatsBase } from "fs";
-import { Schema } from "mongoose";
+import { Schema, Model } from "mongoose";
 
 export interface SchemaFrame {
 	schemaName: string;
 	schemaShape: Object;
+	schema: Model<any>;
 }
 class SchemaManager {
 	public defaultRoutesPath = "/schema";
+	public schemaFrameList: SchemaFrame[] = [];
+	constructor() {
+		this.getSchemaFrames();
+	}
 	/**
 	 * @description 모든 스키마의 형태를 가져옵니다.
 	 * @returns {String} 리다이렉션 링크
@@ -39,9 +44,16 @@ class SchemaManager {
 			result.push({
 				schemaName,
 				schemaShape,
+				schema: require(filePath).default,
 			});
 		}
+		this.schemaFrameList = result;
 		return result;
+	}
+	public async getSchemaDataset(schemaName: string): Promise<Schema[]> {
+		let schemaFrame = this.schemaFrameList.find((schemaFrame) => schemaFrame.schemaName == schemaName);
+		if (schemaFrame) return schemaFrame.schema.find();
+		else [];
 	}
 }
 

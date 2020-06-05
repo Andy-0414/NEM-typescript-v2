@@ -23,7 +23,20 @@ class AdminController extends Controller {
 	 */
 	public getSchemaShape(req: Request, res: Response, next: NextFunction) {
 		let user = req.user as IUserSchema;
-		if (user.isAdmin) super.response(res, HTTPRequestCode.OK, SchemaManager.getSchemaFrames(), "스키마 가져오기 성공");
+		if (user.isAdmin) {
+			return super.response(res, HTTPRequestCode.OK, SchemaManager.getSchemaFrames(), "스키마 가져오기 성공");
+		} else return next(new StatusError(HTTPRequestCode.FORBIDDEN, undefined, "권한 없음"));
+	}
+	/**
+	 * @description 모델 정보를 가져옵니다.
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
+	public async getSchemaDataset(req: Request, res: Response, next: NextFunction) {
+		let user = req.user as IUserSchema;
+		let schemaName = req.body.schemaName;
+		if (user.isAdmin) super.response(res, HTTPRequestCode.OK, await SchemaManager.getSchemaDataset(schemaName), "스키마 가져오기 성공");
 		else return next(new StatusError(HTTPRequestCode.FORBIDDEN, undefined, "권한 없음"));
 	}
 }

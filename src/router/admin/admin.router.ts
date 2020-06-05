@@ -6,5 +6,6 @@ const router = Router();
 
 router.get("/get-login-type", adminController.getLoginType);
 router.get("/get-schema-shape", PassportManager.authenticate(), adminController.getSchemaShape);
+router.post("/get-schema-dataset", PassportManager.authenticate(), adminController.getSchemaDataset);
 
 export default router;
