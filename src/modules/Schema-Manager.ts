@@ -57,6 +57,13 @@ class SchemaManager {
 		this.schemaFrameList = result;
 		return result;
 	}
+
+	public async createSchemaDataset(schemaName: string, data: any): Promise<Schema | null> {
+		let schemaFrame: SchemaFrame = this.schemaFrameList.find((schemaFrame) => schemaFrame.schemaName == schemaName);
+		if (schemaFrame) {
+			return await schemaFrame.schema.create(data);
+		} else null;
+	}
 	public async getSchemaDataset(schemaName: string): Promise<Schema[]> {
 		let schemaFrame: SchemaFrame = this.schemaFrameList.find((schemaFrame) => schemaFrame.schemaName == schemaName);
 		if (schemaFrame) {
@@ -69,6 +76,18 @@ class SchemaManager {
 			let selectStr = selectFalseList.length > 0 ? `+${selectFalseList.join(" +")}` : "";
 			return await schemaFrame.schema.find().select(selectStr).exec(); // FIXME: toObjet 시 select:false 필드 소멸
 		} else [];
+	}
+	public async updateSchemaDataset(schemaName: string, data: any): Promise<Schema | null> {
+		let schemaFrame: SchemaFrame = this.schemaFrameList.find((schemaFrame) => schemaFrame.schemaName == schemaName);
+		if (schemaFrame) {
+			return await schemaFrame.schema.updateOne(data._id, data);
+		} else null;
+	}
+	public async deleteSchemaDataset(schemaName: string, _id: string): Promise<Schema | null> {
+		let schemaFrame: SchemaFrame = this.schemaFrameList.find((schemaFrame) => schemaFrame.schemaName == schemaName);
+		if (schemaFrame) {
+			return await schemaFrame.schema.findByIdAndDelete(_id);
+		} else null;
 	}
 }
 
