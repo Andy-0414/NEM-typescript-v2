@@ -28,7 +28,20 @@ class AdminController extends Controller {
 		} else return next(new StatusError(HTTPRequestCode.FORBIDDEN, undefined, "권한 없음"));
 	}
 	/**
-	 * @description 모델 데어티를 가져옵니다.
+	 * @description 모델 데이터를 생성합니다.
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
+	public async createSchemaDataset(req: Request, res: Response, next: NextFunction) {
+		let user = req.user as IUserSchema;
+		let schemaName = req.body.schemaName;
+		let data = req.body.data;
+		if (user.isAdmin) super.response(res, HTTPRequestCode.OK, await SchemaManager.createSchemaDataset(schemaName, data), "데이터 생성 성공");
+		else return next(new StatusError(HTTPRequestCode.FORBIDDEN, undefined, "권한 없음"));
+	}
+	/**
+	 * @description 모델 데이터를 가져옵니다.
 	 * @param {Request}req Express req
 	 * @param {Response}res Express res
 	 * @param {NextFunction}next Express next
@@ -37,6 +50,32 @@ class AdminController extends Controller {
 		let user = req.user as IUserSchema;
 		let schemaName = req.body.schemaName;
 		if (user.isAdmin) super.response(res, HTTPRequestCode.OK, await SchemaManager.getSchemaDataset(schemaName), "스키마 가져오기 성공");
+		else return next(new StatusError(HTTPRequestCode.FORBIDDEN, undefined, "권한 없음"));
+	}
+	/**
+	 * @description 모델 데이터를 수정합니다.
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
+	public async updateSchemaDataset(req: Request, res: Response, next: NextFunction) {
+		let user = req.user as IUserSchema;
+		let schemaName = req.body.schemaName;
+		let data = req.body.data;
+		if (user.isAdmin) super.response(res, HTTPRequestCode.OK, await SchemaManager.updateSchemaDataset(schemaName, data), "데이터 생성 성공");
+		else return next(new StatusError(HTTPRequestCode.FORBIDDEN, undefined, "권한 없음"));
+	}
+	/**
+	 * @description 모델 데이터를 제거합니다.
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
+	public async deleteSchemaDataset(req: Request, res: Response, next: NextFunction) {
+		let user = req.user as IUserSchema;
+		let schemaName = req.body.schemaName;
+		let _id = req.body.data._id;
+		if (user.isAdmin) super.response(res, HTTPRequestCode.OK, await SchemaManager.deleteSchemaDataset(schemaName, _id), "데이터 생성 성공");
 		else return next(new StatusError(HTTPRequestCode.FORBIDDEN, undefined, "권한 없음"));
 	}
 }

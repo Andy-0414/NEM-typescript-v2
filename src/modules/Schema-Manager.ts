@@ -80,7 +80,7 @@ class SchemaManager {
 	public async updateSchemaDataset(schemaName: string, data: any): Promise<Schema | null> {
 		let schemaFrame: SchemaFrame = this.schemaFrameList.find((schemaFrame) => schemaFrame.schemaName == schemaName);
 		if (schemaFrame) {
-			return await schemaFrame.schema.updateOne(data._id, data);
+			return await schemaFrame.schema.updateOne({ _id: data._id }, data);
 		} else null;
 	}
 	public async deleteSchemaDataset(schemaName: string, _id: string): Promise<Schema | null> {
