@@ -41,7 +41,7 @@ export interface IPostSchema extends IPost, Document {
 export interface IPostModel extends Model<IPostSchema> {}
 
 PostSchema.methods.ownerPermissionCheck = function (this: IPostSchema, user: IUserSchema): boolean {
-	return (this.owner as ObjectID).equals(user._id); // TODO: ObjectID
+	return (this.owner as ObjectID).equals(user._id);
 };
 
 PostSchema.methods.updateData = async function (this: IPostSchema, post: IPost): Promise<IPostSchema> {
