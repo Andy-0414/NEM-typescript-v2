@@ -29,6 +29,20 @@ class AuthController extends Controller {
 		}
 	}
 	/**
+	 * @description 로그아웃
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
+	public async logout(req: Request, res: Response, next: NextFunction) {
+		try {
+			req.logout();
+			return super.response(res, HTTPRequestCode.OK, null, "계정 로그아웃 성공");
+		} catch (err) {
+			return next(err);
+		}
+	}
+	/**
 	 * @description 토큰 재발급, 세션 사용중일 시 메인 페이지로 리다이렉트
 	 * @param {Request}req Express req
 	 * @param {Response}res Express res

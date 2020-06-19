@@ -5,6 +5,7 @@ import authController from "./auth.controller";
 const router = Router();
 
 router.post("/user/login", PassportManager.getLoginMiddleware(), authController.login);
+router.post("/user/logout", PassportManager.getLoginMiddleware(), authController.logout);
 
 router.get("/user/login/github", PassportManager.authenticate(LOGIN_TYPE.GITHUB));
 router.get(PassportManager.getCallbackURLByLoginType(LOGIN_TYPE.GITHUB), PassportManager.authenticate(LOGIN_TYPE.GITHUB), authController.getTokenOrRedirect);
