@@ -32,7 +32,7 @@ class PostController extends Controller {
 	 */
 	public async readPosts(req: Request, res: Response, next: NextFunction) {
 		try {
-			let posts = await Post.find();
+			let posts = await Post.find().populate("owner", "_id userID username");
 
 			return super.response(res, HTTPRequestCode.OK, posts, "글 가져오기 성공");
 		} catch (err) {
