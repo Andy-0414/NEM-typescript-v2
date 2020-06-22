@@ -3,8 +3,8 @@
 		"module": "commonjs",
 		"target": "es6",
 		"moduleResolution": "node",
-		"sourceMap": true,
-        "outDir": "dist.ts",
+		"sourceMap": false,
+        "outDir": "dist",
         "esModuleInterop": true
 	},
 	"include": ["src/**/*"],

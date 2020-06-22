@@ -2,7 +2,7 @@
 	"apps": [
 		{
 			"name": "NEM_TYPESCRIPT-V2",
-			"script": "./dist/app.js",
+			"script": "./dist/src/app.js",
 			"autorestart": true,
 			"watch": false
 		}

@@ -5,9 +5,10 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "mocha -r ts-node/register ./**/*.test.ts",
-		"start": "npm run build && pm2 start pm2.json",
+		"start": "tsc && pm2 start pm2.json",
+		"heroku-prebuild": "npm install pm2 -g",
+		"heroku-start": "tsc && pm2-runtime start pm2.json --env production",
 		"stop": "pm2 delete pm2.json",
-		"build": "webpack --config webpack.config.js",
 		"serve": "nodemon nodemon.json",
 		"redis": "redis-server"
 	},
@@ -52,10 +53,8 @@
 		"nodemon": "^2.0.2",
 		"supertest": "^4.0.2",
 		"ts-loader": "^6.2.1",
-		"ts-node": "^8.7.0",
-		"typescript": "^3.8.3",
-		"webpack-cli": "^3.3.11",
-		"webpack-node-externals": "^1.7.2"
+		"ts-node": "^8.10.2",
+		"typescript": "^3.8.3"
 	},
 	"dependencies": {
 		"chalk": "^3.0.0",
@@ -67,7 +66,6 @@
 		"express": "^4.17.1",
 		"express-session": "^1.17.1",
 		"helmet": "^3.21.3",
-		"i": "^0.3.6",
 		"jwt-simple": "^0.5.6",
 		"moment": "^2.24.0",
 		"moment-timezone": "^0.5.28",
@@ -83,7 +81,6 @@
 		"passport-naver": "^1.0.6",
 		"pm2": "^4.4.0",
 		"redis": "^3.0.2",
-		"socket.io": "^2.3.0",
-		"webpack": "^4.42.0"
+		"socket.io": "^2.3.0"
 	}
 }
