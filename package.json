@@ -1,6 +1,6 @@
 {
 	"name": "nem-typescript-v2",
-	"version": "0.0.2",
+	"version": "1.0.0",
 	"description": "Node.js + Typescript + Express + MongoDB",
 	"main": "index.js",
 	"scripts": {

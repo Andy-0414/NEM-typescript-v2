@@ -12,8 +12,8 @@ Node.js + Express + MongoDB + Typescript 를 사용하여 서버 탬플릿을 �
 NODE_ENV=STRING // 개발환경 'development' , 'production'
 REQUEST_URI=STRING // 배포 URL
 
-DB_URI=STRING // DB 접근 주소
-MONGODB_URI=STRING // DB 접근 주소 (heroku)
+DB_URI=STRING // DB 접근 주소 (mongodb://....)
+MONGODB_URI=STRING // DB 접근 주소 (heroku) (mLab 기본제공 URI)
 
 SECRET_KEY=STRING // 암호화 키
 TOKEN_EXPIRATION=NUMBER(ms) // 토큰 만료 시간
@@ -54,7 +54,7 @@ socket 폴더 안에 \*\*\*.socket.ts 파일을 자동으로 인식하여 소켓
 
 -   이메인 인증 추가하기 // node mailer
 -   라우터 설명 다시 작성 필요함.
--   어드민 계정 생성 
+-   어드민 계정 생성
 
 # Router
 
