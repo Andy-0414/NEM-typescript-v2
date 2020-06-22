@@ -68,7 +68,7 @@ class PostController extends Controller {
 			let post = await Post.findById(id);
 
 			if (post) {
-				return super.response(res, HTTPRequestCode.OK, Comment.find({ post: post._id }), "해당 글 댓글 가져오기 성공");
+				return super.response(res, HTTPRequestCode.OK, await Comment.find({ post: post._id }).populate("owner", "_id userID username"), "해당 글 댓글 가져오기 성공");
 			} else return next(new StatusError(HTTPRequestCode.NOT_FOUND, undefined, "존재하지 않음"));
 		} catch (err) {
 			return next(err);
