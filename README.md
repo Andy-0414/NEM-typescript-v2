@@ -12,10 +12,8 @@ Node.js + Express + MongoDB + Typescript 를 사용하여 서버 탬플릿을 �
 NODE_ENV=STRING // 개발환경 'development' , 'production'
 REQUEST_URI=STRING // 배포 URL
 
-DB_URL=STRING // DB 접근 주소
-DB_NAME=STRING // DB 이름
-DB_USER=STRING // DB 아이디
-DB_PASSS=STRING // DB 비밀번호
+DB_URI=STRING // DB 접근 주소
+MONGODB_URI=STRING // DB 접근 주소 (heroku)
 
 SECRET_KEY=STRING // 암호화 키
 TOKEN_EXPIRATION=NUMBER(ms) // 토큰 만료 시간

@@ -9,10 +9,7 @@ class MongoDBHelper extends DBHelper<Mongoose.Connection> {
 	private db: Mongoose.Connection;
 
 	public readonly env: string = process.env.NODE_ENV || "development"; // 개발 환경
-	public readonly dbName: string = process.env.DB_NAME || `NEM-TEMPLATE-V2_${this.env}`; // DB 이름
-	public readonly dbUrl: string = process.env.DB_URL || "mongodb://localhost/NEM-TEMPLATE-V2"; // DB URL
-	public readonly dbUser: string = process.env.DB_USER || ""; // DB username
-	public readonly dbPass: string = process.env.DB_PASS || ""; // DB password
+	public readonly dbUrl: string = process.env.DB_URL || process.env.MONGODB_URI || "mongodb://localhost/NEM-TEMPLATE-V2"; // DB URL
 	/**
 	 * @description MongoDB 활성화
 	 * @param {string}url MongoDB URL
@@ -37,7 +34,7 @@ class MongoDBHelper extends DBHelper<Mongoose.Connection> {
 
 		Mongoose.set("useCreateIndex", true);
 		Mongoose.set("useUnifiedTopology", true);
-		Mongoose.connect(url || this.dbUrl, { user: this.dbUser, pass: this.dbPass, dbName: this.dbName, useNewUrlParser: true, useUnifiedTopology: true });
+		Mongoose.connect(url || this.dbUrl, { useNewUrlParser: true, useUnifiedTopology: true });
 	}
 	/**
 	 * @description DB 객체 반환
