@@ -6,10 +6,9 @@
 	"scripts": {
 		"test": "mocha -r ts-node/register ./**/*.test.ts",
 		"build": "tsc",
-		"postinstall": "npm run build",
-		"background-start": "pm2 start pm2.json",
+		"background-start": "npm run build && pm2 start pm2.json",
 		"heroku-prebuild": "npm install pm2 -g && npm install typescript -g",
-		"start": "pm2-runtime start pm2.json --env production",
+		"start": "npm run build && pm2-runtime start pm2.json --env production",
 		"stop": "pm2 delete pm2.json",
 		"serve": "nodemon nodemon.json",
 		"redis": "redis-server"
