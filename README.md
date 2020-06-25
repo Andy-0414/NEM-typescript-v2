@@ -94,14 +94,14 @@ socket 폴더 안에 \*\*\*.socket.ts 파일을 자동으로 인식하여 소켓
 
 -   GET /auth/user/:\_id
 
-    > Response
+> Response
 
-        result: 결과 [Boolean]
-        data: {
-            _id: 고유 번호 [String]
-            userID: 유저 아이디 [String]
-            ...
-        }
+    result: 결과 [Boolean]
+    data: {
+        _id: 고유 번호 [String]
+        userID: 유저 아이디 [String]
+        ...
+    }
 
 -   PUT /auth/user/:\_id
 
@@ -208,7 +208,6 @@ socket 폴더 안에 \*\*\*.socket.ts 파일을 자동으로 인식하여 소켓
     }
 
 -   POST /auth/user/token
--   GET /auth/user/my
 
 > Header - Token
 
@@ -218,6 +217,21 @@ socket 폴더 안에 \*\*\*.socket.ts 파일을 자동으로 인식하여 소켓
 
     result: 결과 [Boolean]
     data: 새 유저 토큰 [String]
+
+-   GET /auth/user/my
+
+> Header - Token
+
+    Authorization: 유저 토큰 [String]
+
+> Response
+
+    result: 결과 [Boolean]
+    data: {
+        _id: 고유 번호 [String]
+        userID: 유저 아이디 [String]
+        ...
+    }
 
 ## post
 
