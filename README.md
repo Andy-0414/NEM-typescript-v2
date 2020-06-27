@@ -58,8 +58,6 @@ socket 폴더 안에 \*\*\*.socket.ts 파일을 자동으로 인식하여 소켓
 
 # Router
 
-## admin
-
 ## auth
 
 -   POST /auth/user : 회원가입
@@ -235,8 +233,16 @@ socket 폴더 안에 \*\*\*.socket.ts 파일을 자동으로 인식하여 소켓
 
 ## post
 
-TODO
+-   POST /post
+-   GET /post
+-   GET /post/:\_id
+-   GET /post/:\_id/get-comments
+-   PUT /post/:\_id
+-   DELETE /post/:\_id
 
 ## comment
 
-TODO
+-   POST /comment
+-   GET /comment/:\_id
+-   PUT /comment/:\_id
+-   DELETE /comment/:\_id
