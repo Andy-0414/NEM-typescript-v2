@@ -2,7 +2,9 @@
 
 Node.js + Express + MongoDB + Typescript 를 사용하여 서버 탬플릿을 제작했습니다.
 
-기본적인 로그인, 글쓰기, 댓글쓰기가 구현된 탬플릿입니다.
+기본적인 로그인(auth), 글(post), 댓글(comment)이 구현된 탬플릿입니다.
+
+JWT 토큰 로그인과 세션 로그인을 모두 지원하고, 소셜 로그인 또한 지원합니다.
 
 # GET STARTED
 
