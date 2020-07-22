@@ -92,6 +92,21 @@ class AuthController extends Controller {
 	}
 
 	/**
+	 * @description 아이디 중복 검사
+	 * @param {Request}req Express req
+	 * @param {Response}res Express res
+	 * @param {NextFunction}next Express next
+	 */
+	public async checkDuplicate(req: Request, res: Response, next: NextFunction) {
+		let userID = req.body.userID;
+
+		if (!userID) return next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
+		let user = await User.find({ userID });
+		if (user) return super.response(res, HTTPRequestCode.OK, false, "이미 존재하는 아이디");
+		else return super.response(res, HTTPRequestCode.OK, true, "존재하지 않는 아이디");
+	}
+
+	/**
 	 * @description 모든 계정를 가져옴
 	 * @param {Request}req Express req
 	 * @param {Response}res Express res
@@ -99,7 +114,7 @@ class AuthController extends Controller {
 	 */
 	public async getAllUsers(req: Request, res: Response, next: NextFunction) {
 		try {
-			let users = await User.find();
+			let users = await User.find({}, "userID username");
 
 			return super.response(res, HTTPRequestCode.OK, users, "계정 목록 가져오기 성공");
 		} catch (err) {
@@ -117,7 +132,7 @@ class AuthController extends Controller {
 		try {
 			let id = req.params.id;
 
-			let users = await User.find({ _id: id }, { password: 0, salt: 0 });
+			let users = await User.find({ _id: id }, "userID username");
 			return super.response(res, HTTPRequestCode.OK, users, "계정 가져오기 성공");
 		} catch (err) {
 			return next(err);

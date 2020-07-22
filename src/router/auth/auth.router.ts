@@ -21,6 +21,7 @@ router.post("/user/my", PassportManager.authenticate(), authController.my);
 router.get("/user/my", PassportManager.authenticate(), authController.my);
 
 router.post("/user", authController.createUser);
+router.post("/user/check-duplicate", authController.checkDuplicate);
 
 router.get("/user", authController.getAllUsers);
 router.get("/user/:id", authController.getUser);

@@ -80,6 +80,17 @@ socket 폴더 안에 \*\*\*.socket.ts 파일을 자동으로 인식하여 소켓
         ...
     }
 
+-   POST /user/check-duplicater : 아이디 중복 검사
+
+> Body
+
+    userID: 유저 아이디 [String] REQUIRE
+
+> Response
+
+    result: 결과 [Boolean]
+    data: 중복 여부 [Boolean] ( true : 중복 없음, false : 중복 있음 )
+
 -   GET /auth/user
 
 > Response
