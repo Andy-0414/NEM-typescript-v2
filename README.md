@@ -67,6 +67,7 @@ socket 폴더 안에 \*\*\*.socket.ts 파일을 자동으로 인식하여 소켓
     userID: 유저 아이디 [String] REQUIRE
     password: 유저 비밀번호 [String] REQUIRE
 
+    img?: 유저 프로필 사진 [Base64String]
     username?: 유저 이름 [String]
     email?: 이메일 [String]
 

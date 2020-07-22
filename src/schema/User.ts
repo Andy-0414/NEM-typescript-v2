@@ -4,6 +4,8 @@ import crypto from "crypto";
 import { HTTPRequestCode, StatusError } from "../modules/Send-Rule";
 import Post from "./Post";
 import Comment from "./Comment";
+import Base64ToImage from "../modules/Base64-To-Image";
+import ResourceManager from "../modules/Resource-Manager";
 
 export interface EncryptionPassword {
 	password: string;
@@ -57,6 +59,12 @@ export interface IUserSchema extends IUser, Document {
 	 * @returns {Promise<IUserSchema>} 변경된 계정를 반환합니다.
 	 */
 	resetPassword(password: string): Promise<IUserSchema>;
+	/**
+	 * @description 계정 이미지를 변경합니다.
+	 * @param {string}base64 base64 이미지
+	 * @returns {Promise<IUserSchema>} 변경된 계정를 반환합니다.
+	 */
+	changeProfileImage(base64: string): Promise<IUserSchema>;
 	/**
 	 * @description 계정 정보를 재설정합니다
 	 * @param {string}IUser 계정 정보
@@ -123,6 +131,15 @@ UserSchema.methods.resetPassword = async function (this: IUserSchema, password: 
 		let encryptionPassword = await constructor.createEncryptionPassword(password);
 		this.password = encryptionPassword.password;
 		this.salt = encryptionPassword.salt;
+		return await this.save();
+	} catch (err) {
+		throw err;
+	}
+};
+UserSchema.methods.changeProfileImage = async function (this: IUserSchema, base64: string): Promise<IUserSchema> {
+	try {
+		let imageData = Base64ToImage.getImageData(base64);
+		this.imgPath = await ResourceManager.save("user", `${this._id}.${imageData.imgType}`, imageData.imgFile);
 		return await this.save();
 	} catch (err) {
 		throw err;

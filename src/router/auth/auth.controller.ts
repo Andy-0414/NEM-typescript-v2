@@ -81,6 +81,9 @@ class AuthController extends Controller {
 		try {
 			let userData: IUser = req.body;
 			let user = await User.createUser(userData);
+			let base64Image = req.body.img;
+
+			if (base64Image) await user.changeProfileImage(base64Image);
 
 			return super.response(res, HTTPRequestCode.CREATE, user, "계정 생성 성공");
 		} catch (err) {
@@ -132,12 +135,9 @@ class AuthController extends Controller {
 			let user = req.user as IUserSchema;
 			let id = req.params.id;
 
-			if (user._id == id) {
-				let password = req.body.password;
-				return super.response(res, HTTPRequestCode.OK, await user.resetPassword(password), "계정 비밀번호 변경 성공");
-			} else {
-				return next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
-			}
+			if (user._id != id) return next(new StatusError(HTTPRequestCode.FORBIDDEN, "권한 없음"));
+			let password = req.body.password;
+			return super.response(res, HTTPRequestCode.OK, await user.resetPassword(password), "계정 비밀번호 변경 성공");
 		} catch (err) {
 			return next(err);
 		}
@@ -152,15 +152,12 @@ class AuthController extends Controller {
 		try {
 			let user = req.user as IUserSchema;
 			let id = req.params.id;
-			if (!req.body.img) return next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
-			let imageData = Base64ToImage.getImageData(req.body.img);
+			let base64Image = req.body.img;
 
-			if (user._id == id) {
-				user.imgPath = await ResourceManager.save("user", `${id}.${imageData.imgType}`, imageData.imgFile);
-				return super.response(res, HTTPRequestCode.OK, await user.save(), "계정 비밀번호 변경 성공");
-			} else {
-				return next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
-			}
+			if (!base64Image) return next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
+			if (user._id != id) return next(new StatusError(HTTPRequestCode.FORBIDDEN, "권한 없음"));
+			await user.changeProfileImage(base64Image);
+			return super.response(res, HTTPRequestCode.OK, await user.save(), "계정 비밀번호 변경 성공");
 		} catch (err) {
 			return next(err);
 		}
@@ -176,13 +173,9 @@ class AuthController extends Controller {
 		try {
 			let user = req.user as IUserSchema;
 			let id = req.params.id;
-
-			if (user._id == id) {
-				let userInfo = req.body as IUser;
-				return super.response(res, HTTPRequestCode.OK, await user.changeInfo(userInfo), "계정 정보 변경 성공");
-			} else {
-				return next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
-			}
+			if (user._id != id) return next(new StatusError(HTTPRequestCode.FORBIDDEN, "권한 없음"));
+			let userInfo = req.body as IUser;
+			return super.response(res, HTTPRequestCode.OK, await user.changeInfo(userInfo), "계정 정보 변경 성공");
 		} catch (err) {
 			return next(err);
 		}
@@ -199,11 +192,8 @@ class AuthController extends Controller {
 			let user = req.user as IUserSchema;
 			let id = req.params.id;
 
-			if (user._id == id) {
-				return super.response(res, HTTPRequestCode.NO_CONTENT, await User.deleteOne(user), "계정 삭제 성공");
-			} else {
-				return next(new StatusError(HTTPRequestCode.BAD_REQUEST, "잘못된 요청"));
-			}
+			if (user._id != id) return next(new StatusError(HTTPRequestCode.FORBIDDEN, "권한 없음"));
+			return super.response(res, HTTPRequestCode.NO_CONTENT, await User.deleteOne(user), "계정 삭제 성공");
 		} catch (err) {
 			return next(err);
 		}
