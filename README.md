@@ -27,6 +27,8 @@ SESSION_EXPIRATION=NUMBER(ms) // 세션 만료 시간
 PORT=NUMBER (default 3000) // 포트
 ```
 
+/config/auth.ts 에서 소셜 로그인 설정 가능
+
 실행
 
 ```
